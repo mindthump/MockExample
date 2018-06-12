@@ -9,14 +9,14 @@ objects without changing the original code.
 """
 
 
-@patch('person.DataSource.get_name')
+@patch('person.PersonDataSource.get_name')
 def test_name__method_patch(mock_datasource_getname):
     """
     A single method is the simplest to patch. The tricky part is knowing
     its name inside the running code; 'import' statements are a good
-    clue. Here, 'person' is the module under test, 'DataSource' is a
+    clue. Here, 'person' is the module under test, 'PersonDataSource' is a
     class inside the 'person' module, and 'get_name' is a method of the
-    'DataSource' class.
+    'PersonDataSource' class.
     """
 
     # Set the value our mock object will return for the mocked get_name() function
@@ -38,7 +38,7 @@ def test_name_inside_function():
     name = a_person.name()
     assert name == "Alice"
 
-    with patch('person.DataSource.get_name') as mock_datasource_getname:
+    with patch('person.PersonDataSource.get_name') as mock_datasource_getname:
         # Set a side-effect for our mock object. If it is an iterable
         # each call will return the next value. It could call a function
         # defined here in the test.
@@ -54,7 +54,7 @@ def test_name_inside_function():
         assert name == "Tom"
 
 
-@patch('person.DataSource')
+@patch('person.PersonDataSource')
 def test_name__class_patch(mock_datasource_class):
     """
     This example is for patching an entire CLASS.

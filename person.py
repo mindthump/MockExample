@@ -1,4 +1,4 @@
-from data_source import DataSource
+from data_source import PersonDataSource
 
 
 class Person(object):
@@ -6,6 +6,6 @@ class Person(object):
         self.id = _id
 
     def name(self):
-        ds = DataSource()
+        ds = PersonDataSource()
         # This method call will be the target of our mocking.
         return ds.get_name(self.id)

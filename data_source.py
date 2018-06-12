@@ -1,4 +1,4 @@
-class DataSource:
+class PersonDataSource:
     """
     This is a simple representation of what could be
     a database or other source of data.
