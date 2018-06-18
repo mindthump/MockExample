@@ -1,24 +1,23 @@
 #!/usr/bin/env python
 
 import pytest
-import pprint
+# import pprint
 from mock import patch
 import employee  # the entire module
 from student import Student  # a specific class
-import human_database
+import people_data
 
 """
-The whole point of mocking is to monitor and/or alter the __behavior__ of running
-objects **without changing the original code**.
-Patch as "small" as you can; whenever possible only the specific behavior that is 
-actually __used__.
-Exception: if a resource class is expensive or impossible to instantiate you may need 
-to patch the whole class.
+The whole point of mocking is to monitor and/or alter the _behavior_
+of running objects *without changing the original code*. Patch as
+"small" as you can; whenever possible only the specific behavior that
+is actually _used_. Exception: if a resource class is expensive or
+impossible to instantiate you may need to patch the whole class.
 """
 
 
-@patch('student.PersonDataSource.get_name_by_id')
-def test_student_name(mock_student_datasource_getname):
+@patch('student.PeopleDatabase.get_name_by_id')
+def test_student_name(mock_student_getname):
     """
     A single method is the simplest to patch. The student.py module
     imports PersonDataSource directly so that's what we call it. The
@@ -31,8 +30,9 @@ def test_student_name(mock_student_datasource_getname):
     # we override the return value, the input doesn't go anywhere.
     # "Sam" never appears in the data, so it also acts as a guard from
     # accidental false-positive tests.
-    mock_student_datasource_getname.return_value = "Sam"
-    # NOTE: If we use side_effect() instead we can make use of
+    mock_student_getname.return_value = "Sam"
+    # NOTE: side_effect()
+    # If we use side_effect() instead we can make use of
     # arguments; see mock_employee_datasource_getname below.
     test_student = Student(2)
     # We can see instance_pds but not _pds or module_pds
@@ -41,19 +41,19 @@ def test_student_name(mock_student_datasource_getname):
     assert name == "Sam"
 
 
-@patch('employee.person_data_source.PersonDataSource.get_name_by_id')
-def test_employee_name(mock_employee_datasource_getname):
+@patch('people_data.PeopleDatabase.get_name_by_id')
+def test_employee_name(mock_employee_getname):
     """
     The same test, except the target name of the mocked method
     """
-    mock_employee_datasource_getname.return_value = "Bob"
+    mock_employee_getname.return_value = "Bob"
 
     test_employee = employee.Employee(1)
     employee_name = test_employee.name()
-    # NOTE: We switched the name "Bob" when Employee asked the DS for
-    # it, but we didn't change what Employee did with it. In this case,
-    # it applied formatting akin to a __repl__() so that's what we test
-    # against.
+    # NOTE: We switched the name "Bob" when Employee asked the DS
+    # for it, but we didn't change what Employee did with it after
+    # we switched it. In this case, it applied formatting akin to a
+    # __repl__() so that's what we test against.
     assert employee_name == "#1 - Bob"
 
 
@@ -68,7 +68,7 @@ def test_name__context_manager():
     name = test_employee.name()
     assert name == "#1 - Alice"
 
-    with patch('employee.person_data_source.PersonDataSource.get_name_by_id') as mock_employee_datasource_getname:
+    with patch('employee.people_data.PeopleDatabase.get_name_by_id') as mock_employee_datasource_getname:
         # Set a side-effect for our mock object. If it is an iterable
         # each call will return the next value. It could call a function
         # defined here in the test.
@@ -87,7 +87,7 @@ def test_name__context_manager():
         assert employee_name == "#105 - Tom"
 
 
-@patch('employee.person_data_source.PersonDataSource')
+@patch('employee.people_data.PeopleDatabase')
 def test_name__class_patch(mock_datasource_class):
     """
     This example is for patching an entire CLASS. Most of the time you
@@ -111,20 +111,14 @@ def test_name__class_patch(mock_datasource_class):
     assert employee_name == "#1 - Bob"
 
 
-def test_passing_in_mock_object():
+def test_misc_concepts():
     """
-    Playing with an in-memory database as a test-double
     """
-    humans = human_database.HumanDatabase()
+
+    humans = people_data.PeopleDatabase("db://remote_person_ds/")
     rows = humans.query("SELECT * FROM people where type = 'EMPLOYEE'")
     assert len(rows) == 4
-    # No patch here, works normally
-    with pytest.raises(human_database.sqlite3.DataError) as de_info:
-        bad_employee = humans.get_name_by_id(120)
 
-    employee_name = humans.get_name_by_id(4)
-    assert employee_name == 'Darla'
-    with patch('human_database.HumanDatabase.get_name_by_id') as mock_human_ds_getname:
-        mock_human_ds_getname.return_value = 'Tammy'
-        employee_name = humans.get_name_by_id(4)
-        assert employee_name == 'Tammy'
+    # Expected Exception: this is a lot more readable than try/except
+    with pytest.raises(people_data.sqlite3.DataError):
+        humans.get_name_by_id(120)

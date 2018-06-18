@@ -18,6 +18,7 @@ TODO: Maybe wait a while here and there to show cost savings  ;)
 UNKNOWN_PERSON = {'name': 'UNKNOWN', 'title': 'UNKNOWN'}
 
 
+# noinspection PyUnusedLocal
 class PersonDataSource:
 
     def __init__(self, _datasource_connection_string):
