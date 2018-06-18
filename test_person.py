@@ -117,8 +117,11 @@ def test_passing_in_mock_object():
     """
     humans = human_database.HumanDatabase()
     rows = humans.query("SELECT * FROM people where type = 'EMPLOYEE'")
-    assert len(list(rows)) == 4
+    assert len(rows) == 4
     # No patch here, works normally
+    with pytest.raises(human_database.sqlite3.DataError) as de_info:
+        bad_employee = humans.get_name_by_id(120)
+
     employee_name = humans.get_name_by_id(4)
     assert employee_name == 'Darla'
     with patch('human_database.HumanDatabase.get_name_by_id') as mock_human_ds_getname:

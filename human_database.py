@@ -32,8 +32,14 @@ class HumanDatabase:
 
     def get_name_by_id(self, query_id):
         result = self.query("SELECT name FROM people WHERE id = {}".format(query_id))
-        return result.fetchone()[0]
+        return result[0][0]
+
+    def get_title_by_id(self, query_id):
+        result = self.query("SELECT title FROM people WHERE id = {}".format(query_id))
+        return result[0][0]
 
     def query(self, query_string):
-        result = self._db.execute(query_string)
+        result = list(self._db.execute(query_string))
+        if not result:
+            raise self._db.DataError("No matching results found in database for query: '{}'".format(query_string))
         return result
