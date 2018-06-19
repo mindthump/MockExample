@@ -1,16 +1,26 @@
 #!/usr/bin/env python
 
-import person_data_source
+"""
+Volunteer doesn't know intrinsically about the actual source of the
+data, it needs to be instantiated outside and passed in.
+"""
+
+_original_author = 'ed.cardinal@wdc.com'
 
 
 class Volunteer(object):
     """
+    Initialization is a no-op. All the work happens inside the 'utility'
+    methods.
     """
 
-    def __init__(self, _id):
-        self.id = _id
+    def __init__(self):
+        pass
 
-    def name(self):
-        _pds = person_data_source.PersonDataSource()
-        _name = _pds.get_name(self.id)
-        return _name
+    @staticmethod
+    # For mocking, the fact that get_title_by_id is a static method is irrelevant.
+    def get_title(_id, data_source):
+        _name = data_source.get_title_by_id(_id)
+        # Do something fancy here to justify this otherwise useless method
+        fancy_title = "** {} **".format(_name)
+        return fancy_title
