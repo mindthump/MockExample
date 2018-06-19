@@ -9,7 +9,6 @@ instantiate you may need to patch the whole class.
 """
 
 import pytest
-# import pprint
 from mock import patch, MagicMock
 import employee  # the entire module
 from student import Student  # a specific class
@@ -26,17 +25,26 @@ def test_student(mock_student_getname):
     imports PersonDataSource directly so that's what we call it. The
     tricky part is knowing its name inside the running code; 'import'
     statements are a good clue.
-    """
 
-    # Set the value our mock object will return for the mocked
-    # get_name_by_id() function. The id argument is immaterial in this
-    # case - since we override the return value, the input doesn't go
-    # anywhere. "Sam" never appears in the data, so it also acts as a
-    # guard from accidental false-positive tests.
+    Also note that we don't import the student module into this module,
+    only the Student class. So why can we mock "student.PeopleDatabase"
+    above? Because it's just a string until the mock package is ready to
+    use it in place, and at that time it will be in scope.
+
+    Set the value which our mock object will return when the
+    get_name_by_id() function is called. The id argument is immaterial
+    in this case - since we override the return value, the input doesn't
+    go anywhere. "Sam" never appears in the data, so it also acts as a
+    guard from accidental false-positive tests.
+    """
     mock_student_getname.return_value = "Sam"
 
-    name = Student(2).get_name()
-    assert name == "Sam"
+    # This looks just like a real call to the get_name method
+    student_two = Student(2)
+    student_two_name = student_two.get_name()
+
+    # Buthe real Student #2 is Brenda, we avoided the database
+    assert student_two_name == "Sam"
 
 
 @patch('employee.people_data.PeopleDatabase.get_name_by_id')
@@ -47,12 +55,12 @@ def test_employee(mock_employee_getname):
     mock_employee_getname.return_value = "Bob"
     employee_name = employee.Employee(1).get_name()
 
+    assert employee_name == "#1 - Bob"
     # NOTE: Why don't we assert == "Bob"?
     # We switched the name to "Bob" when Employee asked the database
-    # for it, but we didn't change what Employee did with it after
-    # we switched it. In this case, it applied formatting akin to a
-    # __repl__() then returned that, so that's what we test against.
-    assert employee_name == "#1 - Bob"
+    # for it, but we didn't change what Employee did with it after we
+    # switched it. In this case, it applied formatting, so that's what
+    # we test against.
 
 
 def test_volunteer():
@@ -63,11 +71,14 @@ def test_volunteer():
     title = volunteer.Volunteer.get_title(4, _pds)
     assert title == "** Intern **"
 
-    # We're sending the mock object "spelunking" into the function as an argument.
-    # This is the technique most explanations of mocking start with.
+    # Instead of patching a real object with a mock object, we're
+    # creating the mock ourselves and sending it "spelunking" into the
+    # function as an argument. This is the technique most explanations
+    # of mocking start with.
     mock_database = MagicMock()
-    # Again, what the callable does with it is up to them, so equip your mock accordingly.
-    # Give it a get_title_by_id method and give that method a static return value.
+    # Again, what the callable does with it is up to them, so equip your
+    # mock accordingly. Give it a get_title_by_id method and give that
+    # method a static return value.
     mock_database.get_title_by_id.return_value = "Slave"
     title = volunteer.Volunteer.get_title(4, mock_database)
     assert title == "** Slave **"
@@ -75,8 +86,8 @@ def test_volunteer():
 
 def test_context_manager():
     """
-    'patch' can be used in a context manager ('with...'). This style is
-    good when you only want to patch a function during part of a test
+    'patch' can be used in a context manager ('with ...'). This style is
+    good when you want to patch a function during only part of a test
     """
 
     # No patch here, works normally
@@ -101,45 +112,35 @@ def test_context_manager():
         employee_name = _employee.get_name()
         assert employee_name == "#105 - Tom"
 
-        # We could also look at argument values on the calls, values set
-        # on the mock by the method, and much more
+        # We can look at if it was called, how many times, argument
+        # values on the calls, values set on the mock by the method, and
+        # much more
         assert mock_employee_getname.call_count == 2
 
 
 @patch('employee.people_data.PeopleDatabase')
 def test_class_patch(mock_datasource_class):
     """
-    This example is for patching an entire CLASS. Most of the time you
-    only need to patch a specific method!
+    Occasionally you need to patch an entire CLASS. This is a silly
+    example because we know we could mock just the method, but this may
+    save your skin someday. The return value from directly calling a
+    class constructor is an _instance_ of the class. Because the patch
+    above is for the whole class, the return_value is a new mock object
+    acting in place of the instantiated object, just like any other call
+    to the mock object. On the mocked 'instance', the get_name_by_id
+    method is also a mock...
     """
-
-    # The return value from directly calling a class constructor is an
-    # instance of the class. Because the patch above is for a whole
-    # class, the return_value is a new mock object acting in place of
-    # the instantiated object, just like any other call to the mock
-    # object. On the mocked 'instance', the get_name_by_id method is
-    # also a mock...
-    mock_ds_instance = mock_datasource_class.return_value
-    mock_instance_getname_function = mock_ds_instance.get_name_by_id
-    mock_instance_getname_function.return_value = "Bob"
-
-    # mock_datasource_class.return_value.get_name_by_id.return_value = "Bob"
-
-    test_employee = employee.Employee(1)
-    employee_name = test_employee.get_name()
+    mock_datasource_class.return_value.get_name_by_id.return_value = "Bob"
+    employee_name = employee.Employee(1).get_name()
     assert employee_name == "#1 - Bob"
 
 
-def test_misc_concepts():
+def test_raises_exception():
     """
+    Expected Exception: IMHO this is a lot more readable than try/except
+    From py.test, not mocking!
     """
-    # TODO: mock_open
 
-    # Directly accessing things I shouldn't (_query)
     humans = people_data.PeopleDatabase("db://remote_person_ds/")
-    rows = humans._query("SELECT * FROM people where type = 'EMPLOYEE'")
-    assert len(rows) == 4
-
-    # Expected Exception: this is a lot more readable than try/except
     with pytest.raises(people_data.sqlite3.DataError):
         humans.get_name_by_id(120)

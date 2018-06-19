@@ -12,6 +12,7 @@ _original_author = 'ed.cardinal@wdc.com'
 
 
 class Employee(object):
+    _id = None
 
     def __init__(self, _id):
         self.id = _id
