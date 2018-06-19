@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 
-import sqlite3
-
-_original_author = 'ed.cardinal@wdc.com'
-
 """
 Wrapper around sqlite3 database
 
@@ -15,6 +11,10 @@ returning an iterable of data structures (rows, JSON, etc.)
 The presumption is that going out to the real resource is an "expensive"
 operation (time, money, network, etc.), not suitable in a unit test.
 """
+
+import sqlite3
+
+_original_author = 'ed.cardinal@wdc.com'
 
 # TODO: Maybe wait a while here and there to show "cost" savings ;)
 
@@ -43,7 +43,6 @@ class PeopleDatabase:
 
     def _query(self, query_string):
         raw_query_cursor = self._db.execute(query_string)
-        # Returns something that acts like a list of tuples
         result = raw_query_cursor.fetchall()
         if not result:
             raise self._db.DataError("No matching results found in database for query: '{}'".format(query_string))
