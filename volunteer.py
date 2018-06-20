@@ -5,6 +5,8 @@ Volunteer doesn't know intrinsically about the actual source of the
 data, it needs to be instantiated outside and passed in.
 """
 
+import logging
+
 _original_author = 'ed.cardinal@wdc.com'
 
 

@@ -3,9 +3,10 @@
 """
 Employee imports the entire people_data module and
 instantiates the PeopleDatabase class through its namespace, then
-uses the get_name_by_id function
+uses the get_name_by_id method.
 """
 
+import logging
 import people_data
 
 _original_author = 'ed.cardinal@wdc.com'

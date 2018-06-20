@@ -3,14 +3,16 @@
 """
 This class uses the datasource (PeopleDatabase) to fill relevant fields
 on the object. It accesses the source from a number of different
-contexts, so we can observe the effect of its location on mocking activity.
-Maybe this helps print name badges for a sponsored meet-up.
+contexts, so we can observe the effect of its location on mocking
+activity.
 
 Student imports the PeopleDatabase class directly from the people_data
 module into this module's namespace, instantiates it and uses the
-instance's get_name_by_id function.
+instance's get_name_by_id function. Assume for this example it's cheap
+to connect but expensive to query.
 """
 
+import logging
 from people_data import PeopleDatabase
 
 _original_author = 'ed.cardinal@wdc.com'
@@ -37,7 +39,7 @@ class Student(object):
         instance_name = self.INSTANCE_pds.get_name_by_id(self.id)
         method_name = METHOD_pds.get_name_by_id(self.id)
 
-        # A: In the end the results are all the same: the mocked value
+        # A: In the end the results are all the same
         assert method_name == instance_name == module_name
         # We only really need to return one of these
         return method_name

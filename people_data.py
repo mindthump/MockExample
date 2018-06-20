@@ -7,12 +7,10 @@ This module isn't a mock! It is a "test double", essentially a
 simulator. This will be the _target_ of our mocking. There are both
 basic functions/methods that return a value, and a more general query
 returning an iterable of data structures (rows, JSON, etc.)
-
-The presumption is that going out to the real resource is an "expensive"
-operation (time, money, network, etc.), not suitable in a unit test.
 """
 
 import sqlite3
+import logging
 
 _original_author = 'ed.cardinal@wdc.com'
 
@@ -35,10 +33,14 @@ class PeopleDatabase:
     db_connect_string = None
 
     def __init__(self, db_connect_string):
+        """
+        Create the temporary database and fill it.
+        """
         self.db_connect_string = db_connect_string
         self._db = sqlite3.connect(":memory:")
         self._db.execute("CREATE TABLE people(id INT, name TEXT, title TEXT, type TEXT)")
         self._db.executemany("INSERT INTO people (id, name, title, type) VALUES (?, ?, ?, ?)", people_test_data)
+        logging.info("Database initialized.")
         pass
 
     def _query(self, query_string):
@@ -46,15 +48,21 @@ class PeopleDatabase:
         result = raw_query_cursor.fetchall()
         if not result:
             raise self._db.DataError("No matching results found in database for query: '{}'".format(query_string))
+        logging.info("Completed query, returning results.")
         return result
 
     def get_name_by_id(self, query_id):
         """
+        This is the primary method we will patch.
+        The presumption is that going out to the real resource is an "expensive"
+        operation (time, money, network, etc.), not suitable in a unit test.
         """
         result = self._query("SELECT name FROM people WHERE id = {}".format(query_id))
         # There should be :) only one value in one record.
+        logging.info("Completed get_name_by_id,.")
         return result[0][0]
 
     def get_title_by_id(self, query_id):
         result = self._query("SELECT title FROM people WHERE id = {}".format(query_id))
+        logging.info("Completed get_title_by_id.")
         return result[0][0]

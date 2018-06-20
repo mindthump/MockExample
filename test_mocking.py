@@ -5,15 +5,20 @@ The whole point of mocking is to monitor and/or alter the _behavior_
 of running objects **without changing the original code**. Patch as
 "small" as you can; whenever possible only the specific behavior that
 is actually _used_. If a resource class is expensive or impossible to
-instantiate you may need to patch the whole class.
+instantiate you may need to patch the whole class (see test_class_patch
+below).
 """
 
 import pytest
 from mock import patch, MagicMock
+import logging
 import employee  # the entire module
 from student import Student  # a specific class
 import volunteer
 import people_data
+
+logging.basicConfig(filename='example.log', level=logging.DEBUG, format='%(asctime)s %(message)s',
+                    datefmt='%m/%d/%Y %I:%M:%S %p')
 
 _original_author = 'ed.cardinal@wdc.com'
 
@@ -43,7 +48,7 @@ def test_student(mock_student_getname):
     student_two = Student(2)
     student_two_name = student_two.get_name()
 
-    # Buthe real Student #2 is Brenda, we avoided the database
+    # But the real Student #2 is Brenda, we avoided the database
     assert student_two_name == "Sam"
 
 
@@ -91,25 +96,24 @@ def test_context_manager():
     """
 
     # No patch here, works normally
-    name = employee.Employee(1).get_name()
-    assert name == "#1 - Alice"
+    unpatched_employee = employee.Employee(1).get_name()
+    assert unpatched_employee == "#1 - Alice"
 
     with patch('employee.people_data.PeopleDatabase.get_name_by_id') as mock_employee_getname:
         # Set a side-effect for our mock object. If it is an iterable
         # each call will return the next value. It could call a function,
         # taking the original arguments.
-
         mock_employee_getname.side_effect = ['Bob', 'Tom']
 
-        _employee = employee.Employee(16)
-        employee_name = _employee.get_name()
+        patched_employee = employee.Employee(16)
+        employee_name = patched_employee.get_name()
         assert employee_name == "#16 - Bob"
 
         # Notice that it doesn't matter that we re-instantiate the
         # Student object, because we've patched the method - not the class.
-        _employee = employee.Employee(105)
+        second_patched_employee = employee.Employee(105)
         # This is the second time we are running the patched method
-        employee_name = _employee.get_name()
+        employee_name = second_patched_employee.get_name()
         assert employee_name == "#105 - Tom"
 
         # We can look at if it was called, how many times, argument
@@ -121,14 +125,14 @@ def test_context_manager():
 @patch('employee.people_data.PeopleDatabase')
 def test_class_patch(mock_datasource_class):
     """
-    Occasionally you need to patch an entire CLASS. This is a silly
-    example because we know we could mock just the method, but this may
-    save your skin someday. The return value from directly calling a
-    class constructor is an _instance_ of the class. Because the patch
-    above is for the whole class, the return_value is a new mock object
-    acting in place of the instantiated object, just like any other call
-    to the mock object. On the mocked 'instance', the get_name_by_id
-    method is also a mock...
+    Occasionally you need to patch an entire CLASS. One reason might
+    be that instantiating the class at all is expensive or impossible
+    (e.g., a firewalled resource). The return value from calling a
+    normal class constructor is an _instance_ of the class. Because
+    the patch above is for the whole class, the return_value is a new
+    mock object acting in place of the instantiated object, just like
+    any other call to the mock object. On the mocked 'instance', the
+    get_name_by_id method is also a mock...
     """
     mock_datasource_class.return_value.get_name_by_id.return_value = "Bob"
     employee_name = employee.Employee(1).get_name()
