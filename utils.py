@@ -17,13 +17,13 @@ def initialize_logging(file_log_level=logging.DEBUG, console_log_level=logging.I
     # Log name and path
     log_file = Path(fw_root) / ci_log_name
     log_file.parent.mkdir(parents=True, exist_ok=True)
-    # The logger
-    logger = logging.getLogger(log_file.name.replace('.', '_'))
+    # The root logger. Since we don't have a nice module structure, the
+    # __name__ trick doesn't help us.
+    logger = logging.getLogger()
     # Set the overall lowest level to report
     logger.setLevel(logging.DEBUG)
-    # Don't propagation of messages up the chain, only use this logger's handlers
-    # This can be the cause of duplicate messages
-    logger.parent.handlers = []
+    # Start with no handlers - This can be the cause of duplicate messages
+    logger.handlers = []
     # File handler which logs everything
     fh = logging.handlers.RotatingFileHandler(str(log_file), mode='a',
         maxBytes=1024 * 1024, backupCount=5)

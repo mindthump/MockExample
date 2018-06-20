@@ -11,17 +11,17 @@ import people_data
 
 _original_author = 'ed.cardinal@wdc.com'
 
+logger = logging.getLogger()
 
 class Employee(object):
     _id = None
 
-    def __init__(self, _id, _logger):
+    def __init__(self, _id):
         self.id = _id
-        self.logger = logging.getLogger(__name__)
-        pass
 
     def get_name(self):
         _pds = people_data.PeopleDatabase("db://remote_person_ds/")
         _name = _pds.get_name_by_id(self.id)
         # Decorate the name with the employee number (the ID)
+        logger.debug("Employee name = {}".format(_name))
         return "#{} - {}".format(self.id, _name)
