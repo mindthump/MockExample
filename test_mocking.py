@@ -12,13 +12,13 @@ below).
 import pytest
 from mock import patch, MagicMock
 import logging
+import utils
 import employee  # the entire module
 from student import Student  # a specific class
 import volunteer
 import people_data
 
-logging.basicConfig(filename='example.log', level=logging.DEBUG, format='%(asctime)s %(message)s',
-                    datefmt='%m/%d/%Y %I:%M:%S %p')
+logger = utils.initialize_logging(console_log_level=logging.INFO)
 
 _original_author = 'ed.cardinal@wdc.com'
 
@@ -45,10 +45,11 @@ def test_student(mock_student_getname):
     mock_student_getname.return_value = "Sam"
 
     # This looks just like a real call to the get_name method
-    student_two = Student(2)
+    student_two = Student(2, logger)
     student_two_name = student_two.get_name()
+    logger.info("Student #2 name = '{}'".format(student_two_name))
 
-    # But the real Student #2 is Brenda, we avoided the database
+    # But the real Student #2 is Brenda, we avoided the database fetch
     assert student_two_name == "Sam"
 
 
@@ -58,7 +59,8 @@ def test_employee(mock_employee_getname):
     The same test, except the target name of the mocked method
     """
     mock_employee_getname.return_value = "Bob"
-    employee_name = employee.Employee(1).get_name()
+    employee_name = employee.Employee(1, logger).get_name()
+    logger.warn("Employee #1 = '{}'".format(employee_name))
 
     assert employee_name == "#1 - Bob"
     # NOTE: Why don't we assert == "Bob"?
@@ -73,7 +75,7 @@ def test_volunteer():
     It's a thing with the door and the world and a thing. (Never mind).
     """
     _pds = people_data.PeopleDatabase("db://remote_person_ds/")
-    title = volunteer.Volunteer.get_title(4, _pds)
+    title = volunteer.Volunteer.get_title(4, _pds, logger)
     assert title == "** Intern **"
 
     # Instead of patching a real object with a mock object, we're
@@ -85,7 +87,7 @@ def test_volunteer():
     # mock accordingly. Give it a get_title_by_id method and give that
     # method a static return value.
     mock_database.get_title_by_id.return_value = "Slave"
-    title = volunteer.Volunteer.get_title(4, mock_database)
+    title = volunteer.Volunteer.get_title(4, mock_database, logger)
     assert title == "** Slave **"
 
 
@@ -96,7 +98,7 @@ def test_context_manager():
     """
 
     # No patch here, works normally
-    unpatched_employee = employee.Employee(1).get_name()
+    unpatched_employee = employee.Employee(1, logger).get_name()
     assert unpatched_employee == "#1 - Alice"
 
     with patch('employee.people_data.PeopleDatabase.get_name_by_id') as mock_employee_getname:
@@ -105,13 +107,13 @@ def test_context_manager():
         # taking the original arguments.
         mock_employee_getname.side_effect = ['Bob', 'Tom']
 
-        patched_employee = employee.Employee(16)
+        patched_employee = employee.Employee(16, logger)
         employee_name = patched_employee.get_name()
         assert employee_name == "#16 - Bob"
 
         # Notice that it doesn't matter that we re-instantiate the
         # Student object, because we've patched the method - not the class.
-        second_patched_employee = employee.Employee(105)
+        second_patched_employee = employee.Employee(105, logger)
         # This is the second time we are running the patched method
         employee_name = second_patched_employee.get_name()
         assert employee_name == "#105 - Tom"
@@ -135,7 +137,7 @@ def test_class_patch(mock_datasource_class):
     get_name_by_id method is also a mock...
     """
     mock_datasource_class.return_value.get_name_by_id.return_value = "Bob"
-    employee_name = employee.Employee(1).get_name()
+    employee_name = employee.Employee(1, logger).get_name()
     assert employee_name == "#1 - Bob"
 
 

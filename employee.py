@@ -15,8 +15,10 @@ _original_author = 'ed.cardinal@wdc.com'
 class Employee(object):
     _id = None
 
-    def __init__(self, _id):
+    def __init__(self, _id, _logger):
         self.id = _id
+        self.logger = logging.getLogger(__name__)
+        pass
 
     def get_name(self):
         _pds = people_data.PeopleDatabase("db://remote_person_ds/")
