@@ -6,10 +6,14 @@ Examples of mocking techniques, with minimal comments
 
 import pytest
 from mock import patch, MagicMock
-import employee
-from student import Student
+import logging
+import utils
+import employee  # the entire module
+from student import Student  # a specific class
 import volunteer
 import people_data
+
+logger = utils.initialize_logging(console_log_level=logging.INFO)
 
 _original_author = 'ed.cardinal@wdc.com'
 
@@ -20,6 +24,7 @@ def test_student(mock_student_getname):
     mock_student_getname.return_value = "Sam"
     student_two = Student(2)
     student_two_name = student_two.get_name()
+    logger.info("Student #2 name = '{}'".format(student_two_name))
     assert student_two_name == "Sam"
 
 
@@ -28,6 +33,7 @@ def test_student(mock_student_getname):
 def test_employee(mock_employee_getname):
     mock_employee_getname.return_value = "Bob"
     employee_name = employee.Employee(1).get_name()
+    logger.warning("Employee #1 = '{}'".format(employee_name))
     assert employee_name == "#1 - Bob"
 
 

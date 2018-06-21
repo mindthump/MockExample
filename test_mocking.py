@@ -23,6 +23,7 @@ logger = utils.initialize_logging(console_log_level=logging.INFO)
 _original_author = 'ed.cardinal@wdc.com'
 
 
+# Target imports class
 @patch('student.PeopleDatabase.get_name_by_id')
 def test_student(mock_student_getname):
     """
@@ -53,6 +54,7 @@ def test_student(mock_student_getname):
     assert student_two_name == "Sam"
 
 
+# Target imports module
 @patch('employee.people_data.PeopleDatabase.get_name_by_id')
 def test_employee(mock_employee_getname):
     """
@@ -68,6 +70,7 @@ def test_employee(mock_employee_getname):
     # case, it applied formatting, so that's what  # we test against.
 
 
+# Pass mock object as argument
 def test_volunteer():
     """
     It's a thing with the door and the world and a thing. (Never mind).
@@ -89,19 +92,18 @@ def test_volunteer():
     assert title == "** Slave **"
 
 
+# Patch as context manager
 def test_context_manager():
     """
     'patch' can be used in a context manager ('with ...'). This style is
     good when you want to patch a function during only part of a test
     """
 
-    # No patch here, works normally
+    # Not patched
     unpatched_employee = employee.Employee(1).get_name()
     assert unpatched_employee == "#1 - Alice"
 
-    with patch(
-            'employee.people_data.PeopleDatabase.get_name_by_id') as \
-            mock_employee_getname:
+    with patch('employee.people_data.PeopleDatabase.get_name_by_id') as mock_employee_getname:
         # Set a side-effect for our mock object. If it is an iterable
         # each call will return the next value. It could call a function,
         # taking the original arguments.
@@ -124,6 +126,7 @@ def test_context_manager():
         assert mock_employee_getname.call_count == 2
 
 
+# Patch entire class
 @patch('employee.people_data.PeopleDatabase')
 def test_class_patch(mock_datasource_class):
     """
@@ -141,6 +144,7 @@ def test_class_patch(mock_datasource_class):
     assert employee_name == "#1 - Bob"
 
 
+# Test call raises exception
 def test_raises_exception():
     """
     Expected Exception: IMHO this is a lot more readable than try/except
