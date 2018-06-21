@@ -22,8 +22,6 @@ _original_author = 'ed.cardinal@wdc.com'
 # example) at the module level?
 module_peopledatabase = PeopleDatabase("db://remote_person_ds/")
 
-logger = logging.getLogger()
-
 
 class Student(object):
 
@@ -40,7 +38,7 @@ class Student(object):
         module_name = module_peopledatabase.get_name_by_id(self.id)
         instance_name = self.instance_peopledatabase.get_name_by_id(self.id)
         method_name = method_peopledatabase.get_name_by_id(self.id)
-        logger.debug(
+        logging.debug(
             "{} == {} == {}".format(module_name, instance_name, method_name))
 
         # A: In the end the results are all the same

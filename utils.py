@@ -15,18 +15,21 @@ def initialize_logging(log_id=None, file_log_level=logging.DEBUG,
         ci_log_name=os.environ.get('CI_LOG_NAME', 'common.log'),
         fw_root=os.environ.get('WORKSPACE', '.')):
     """
-    This implementation is in-between using the basic logger and
-    a fully custom system. Since we don't have a nice module
-    structure, the __name__ trick doesn't help us and this has one
-    less layer that can get mis-configured.
+    This implementation is in-between using the basic logging
+    configuration and a fully custom system.
     """
-    if log_id is None:
-        # Use the root logger.
+    if not log_id:
+        # Use the root logger. Since we don't have a nice module
+        # structure, the __name__ trick doesn't help us and this has one
+        # less layer that can get mis-configured. If you use the root
+        # logger (opposed to a named logger) you don't need to keep the
+        # returned logger, because "logging.info()" etc. will work. BTW,
+        # logging.getLogger('') also returns the root.
         logger = logging.getLogger()
     else:
         # This is so you can give it a name (log_id) if you insist, and
-        # it will derive from the root. The log file will be named after
-        # the log_id + '.log'
+        # it will be a child of the root. The log file will be named
+        # after the log_id + '.log'
         logger = logging.getLogger(log_id)
         ci_log_name = "{}.log".format(log_id)
     # Log name and path

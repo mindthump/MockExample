@@ -9,8 +9,6 @@ import logging
 
 _original_author = 'ed.cardinal@wdc.com'
 
-logger = logging.getLogger()
-
 
 class Volunteer(object):
     """

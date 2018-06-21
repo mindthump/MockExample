@@ -18,7 +18,9 @@ from student import Student  # a specific class
 import volunteer
 import people_data
 
-logger = utils.initialize_logging(console_log_level=logging.INFO)
+# Example of overriding logger defaults.
+utils.initialize_logging(console_log_level=logging.INFO)
+logging.info("Starting Tests...")
 
 _original_author = 'ed.cardinal@wdc.com'
 
@@ -48,7 +50,7 @@ def test_student(mock_student_getname):
     # This looks just like a real call to the get_name method
     student_two = Student(2)
     student_two_name = student_two.get_name()
-    logger.info("Student #2 name = '{}'".format(student_two_name))
+    logging.info("Student #2 name = '{}'".format(student_two_name))
 
     # But the real Student #2 is Brenda, we avoided the database fetch
     assert student_two_name == "Sam"
@@ -62,7 +64,7 @@ def test_employee(mock_employee_getname):
     """
     mock_employee_getname.return_value = "Bob"
     employee_name = employee.Employee(1).get_name()
-    logger.warning("Employee #1 = '{}'".format(employee_name))
+    logging.warning("Employee #1 = '{}'".format(employee_name))
 
     assert employee_name == "#1 - Bob"  # NOTE: Why don't we assert == "Bob"?  # We
     # switched the name to "Bob" when Employee asked the database  # for it,
@@ -154,3 +156,14 @@ def test_raises_exception():
     humans = people_data.PeopleDatabase("db://remote_person_ds/")
     with pytest.raises(people_data.sqlite3.DataError):
         humans.get_name_by_id(120)
+
+def main():
+    test_student()
+    test_employee()
+    test_volunteer()
+    test_raises_exception()
+    test_class_patch()
+    test_context_manager()
+
+if __name__ == "__main__":
+    main()
