@@ -62,12 +62,10 @@ def test_employee(mock_employee_getname):
     employee_name = employee.Employee(1).get_name()
     logger.warning("Employee #1 = '{}'".format(employee_name))
 
-    assert employee_name == "#1 - Bob"
-    # NOTE: Why don't we assert == "Bob"?
-    # We switched the name to "Bob" when Employee asked the database
-    # for it, but we didn't change what Employee did with it after we
-    # switched it. In this case, it applied formatting, so that's what
-    # we test against.
+    assert employee_name == "#1 - Bob"  # NOTE: Why don't we assert == "Bob"?  # We
+    # switched the name to "Bob" when Employee asked the database  # for it,
+    # but we didn't change what Employee did with it after we  # switched it. In this
+    # case, it applied formatting, so that's what  # we test against.
 
 
 def test_volunteer():
@@ -101,7 +99,9 @@ def test_context_manager():
     unpatched_employee = employee.Employee(1).get_name()
     assert unpatched_employee == "#1 - Alice"
 
-    with patch('employee.people_data.PeopleDatabase.get_name_by_id') as mock_employee_getname:
+    with patch(
+            'employee.people_data.PeopleDatabase.get_name_by_id') as \
+            mock_employee_getname:
         # Set a side-effect for our mock object. If it is an iterable
         # each call will return the next value. It could call a function,
         # taking the original arguments.

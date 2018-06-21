@@ -10,7 +10,8 @@ General utilities, particularly logging
 """
 
 
-def initialize_logging(log_id=None, file_log_level=logging.DEBUG, console_log_level=logging.INFO,
+def initialize_logging(log_id=None, file_log_level=logging.DEBUG,
+        console_log_level=logging.INFO,
         ci_log_name=os.environ.get('CI_LOG_NAME', 'common.log'),
         fw_root=os.environ.get('WORKSPACE', '.')):
     """
@@ -50,4 +51,3 @@ def initialize_logging(log_id=None, file_log_level=logging.DEBUG, console_log_le
     ch.setFormatter(console_formatter)
     logger.addHandler(ch)
     return logger
-

@@ -17,15 +17,10 @@ _original_author = 'ed.cardinal@wdc.com'
 # TODO: Maybe wait a while here and there to show "cost" savings ;)
 
 # Fake data to fill our fake database.
-people_test_data = [
-    (1, 'Alice', 'Developer', 'EMPLOYEE',),
-    (2, 'Brenda', 'Sophomore', 'STUDENT',),
-    (3, 'Charlie', 'Manager', 'EMPLOYEE',),
-    (4, 'Darla', 'Intern', 'VOLUNTEER',),
-    (5, 'Ella', 'Analyst', 'EMPLOYEE',),
-    (6, 'Francis', 'QA', 'EMPLOYEE',),
-    (7, 'George', 'Freshman', 'STUDENT',),
-]
+people_test_data = [(1, 'Alice', 'Developer', 'EMPLOYEE',),
+    (2, 'Brenda', 'Sophomore', 'STUDENT',), (3, 'Charlie', 'Manager', 'EMPLOYEE',),
+    (4, 'Darla', 'Intern', 'VOLUNTEER',), (5, 'Ella', 'Analyst', 'EMPLOYEE',),
+    (6, 'Francis', 'QA', 'EMPLOYEE',), (7, 'George', 'Freshman', 'STUDENT',), ]
 
 
 class PeopleDatabase:
@@ -39,7 +34,9 @@ class PeopleDatabase:
         self.db_connect_string = db_connect_string
         self._db = sqlite3.connect(":memory:")
         self._db.execute("CREATE TABLE people(id INT, name TEXT, title TEXT, type TEXT)")
-        self._db.executemany("INSERT INTO people (id, name, title, type) VALUES (?, ?, ?, ?)", people_test_data)
+        self._db.executemany(
+            "INSERT INTO people (id, name, title, type) VALUES (?, ?, ?, ?)",
+            people_test_data)
         logging.debug("Database initialized.")
         pass
 
@@ -47,7 +44,9 @@ class PeopleDatabase:
         raw_query_cursor = self._db.execute(query_string)
         result = raw_query_cursor.fetchall()
         if not result:
-            raise self._db.DataError("No matching results found in database for query: '{}'".format(query_string))
+            raise self._db.DataError(
+                "No matching results found in database for query: '{}'".format(
+                    query_string))
         logging.debug("Completed query, returning results.")
         return result
 

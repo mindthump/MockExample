@@ -11,6 +11,7 @@ _original_author = 'ed.cardinal@wdc.com'
 
 logger = logging.getLogger()
 
+
 class Volunteer(object):
     """
     Initialization is a no-op. All the work happens inside the 'utility'

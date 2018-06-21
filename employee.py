@@ -13,6 +13,7 @@ _original_author = 'ed.cardinal@wdc.com'
 
 logger = logging.getLogger()
 
+
 class Employee(object):
     _id = None
 
