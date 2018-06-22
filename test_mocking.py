@@ -7,6 +7,8 @@ of running objects **without changing the original code**. Patch as
 is actually _used_. If a resource class is expensive or impossible to
 instantiate you may need to patch the whole class (see test_class_patch
 below).
+
+TODO: Add tests for the 'badges' app's methods?
 """
 
 import pytest
@@ -49,11 +51,11 @@ def test_student(mock_student_getname):
 
     # This looks just like a real call to the get_name method
     student_two = Student(2)
-    student_two_name = student_two.get_name()
+    student_two_name = student_two.get_badge_text()
     logging.info("Student #2 name = '{}'".format(student_two_name))
 
     # But the real Student #2 is Brenda, we avoided the database fetch
-    assert student_two_name == "Sam"
+    assert student_two_name == "HI! My name is Sam"
 
 
 # Target imports module
@@ -63,13 +65,13 @@ def test_employee(mock_employee_getname):
     The same test, except the target name of the mocked method
     """
     mock_employee_getname.return_value = "Bob"
-    employee_name = employee.Employee(1).get_name()
+    employee_name = employee.Employee(1).get_badge_text()
     logging.warning("Employee #1 = '{}'".format(employee_name))
 
-    assert employee_name == "#1 - Bob"  # NOTE: Why don't we assert == "Bob"?  # We
-    # switched the name to "Bob" when Employee asked the database  # for it,
-    # but we didn't change what Employee did with it after we  # switched it. In this
-    # case, it applied formatting, so that's what  # we test against.
+    assert employee_name == "#1 - Bob"  # NOTE: Why don't we assert == "Bob"?  #  We
+    #  switched the name to Bob when Employee asked the database #  # for it,
+    #  but we didn't change what Employee did with it after we #  # switched it. In
+    # this  #  case, it applied formatting, so that's what #  # we test against.
 
 
 # Pass mock object as argument
@@ -78,7 +80,8 @@ def test_volunteer():
     It's a thing with the door and the world and a thing. (Never mind).
     """
     _pds = people_data.PeopleDatabase("db://remote_person_ds/")
-    title = volunteer.Volunteer.get_title(4, _pds)
+    _pds.connect()
+    title = volunteer.Volunteer.get_badge_text(4, _pds)
     assert title == "** Intern **"
 
     # Instead of patching a real object with a mock object, we're
@@ -90,7 +93,7 @@ def test_volunteer():
     # mock accordingly. Give it a get_title_by_id method and give that
     # method a static return value.
     mock_database.get_title_by_id.return_value = "Slave"
-    title = volunteer.Volunteer.get_title(4, mock_database)
+    title = volunteer.Volunteer.get_badge_text(4, mock_database)
     assert title == "** Slave **"
 
 
@@ -102,24 +105,25 @@ def test_context_manager():
     """
 
     # Not patched
-    unpatched_employee = employee.Employee(1).get_name()
+    unpatched_employee = employee.Employee(1).get_badge_text()
     assert unpatched_employee == "#1 - Alice"
 
-    with patch('employee.people_data.PeopleDatabase.get_name_by_id') as mock_employee_getname:
+    with patch('employee.people_data.PeopleDatabase.get_name_by_id') as \
+            mock_employee_getname:
         # Set a side-effect for our mock object. If it is an iterable
         # each call will return the next value. It could call a function,
         # taking the original arguments.
         mock_employee_getname.side_effect = ['Bob', 'Tom']
 
         patched_employee = employee.Employee(16)
-        employee_name = patched_employee.get_name()
+        employee_name = patched_employee.get_badge_text()
         assert employee_name == "#16 - Bob"
 
         # Notice that it doesn't matter that we re-instantiate the
         # Student object, because we've patched the method - not the class.
         second_patched_employee = employee.Employee(105)
         # This is the second time we are running the patched method
-        employee_name = second_patched_employee.get_name()
+        employee_name = second_patched_employee.get_badge_text()
         assert employee_name == "#105 - Tom"
 
         # We can look at if it was called, how many times, argument
@@ -142,7 +146,7 @@ def test_class_patch(mock_datasource_class):
     get_name_by_id method is also a mock...
     """
     mock_datasource_class.return_value.get_name_by_id.return_value = "Bob"
-    employee_name = employee.Employee(1).get_name()
+    employee_name = employee.Employee(1).get_badge_text()
     assert employee_name == "#1 - Bob"
 
 
@@ -154,19 +158,6 @@ def test_raises_exception():
     """
 
     humans = people_data.PeopleDatabase("db://remote_person_ds/")
+    humans.connect()
     with pytest.raises(people_data.sqlite3.DataError):
         humans.get_name_by_id(120)
-
-
-# Running from commandline w/o py.test
-def main():
-    test_student()
-    test_employee()
-    test_volunteer()
-    test_raises_exception()
-    test_class_patch()
-    test_context_manager()
-
-
-if __name__ == "__main__":
-    main()

@@ -21,8 +21,6 @@ class Volunteer(object):
 
     @staticmethod
     # For mocking, the fact that get_title_by_id is a static method is irrelevant.
-    def get_title(_id, data_source):
-        _name = data_source.get_title_by_id(_id)
-        # Do something fancy here to justify this otherwise useless method
-        fancy_title = "** {} **".format(_name)
-        return fancy_title
+    def get_badge_text(_id, data_source):
+        _title = data_source.get_title_by_id(_id)
+        return "** {} **".format(_title)

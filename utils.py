@@ -13,7 +13,7 @@ General utilities, particularly logging
 def initialize_logging(log_id=None, file_log_level=logging.DEBUG,
         console_log_level=logging.INFO,
         ci_log_name=os.environ.get('CI_LOG_NAME', 'common.log'),
-        fw_root=os.environ.get('WORKSPACE', '.')):
+        fw_root=os.environ.get('WORKSPACE', '.'), verbose=False):
     """
     This implementation is in-between using the basic logging
     configuration and a fully custom system.
@@ -32,6 +32,8 @@ def initialize_logging(log_id=None, file_log_level=logging.DEBUG,
         # after the log_id + '.log'
         logger = logging.getLogger(log_id)
         ci_log_name = "{}.log".format(log_id)
+    if verbose:
+        console_log_level = logging.debug
     # Log name and path
     log_file = Path(fw_root) / ci_log_name
     log_file.parent.mkdir(parents=True, exist_ok=True)

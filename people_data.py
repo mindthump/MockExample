@@ -20,18 +20,22 @@ _original_author = 'ed.cardinal@wdc.com'
 people_test_data = [(1, 'Alice', 'Developer', 'EMPLOYEE',),
     (2, 'Brenda', 'Sophomore', 'STUDENT',), (3, 'Charlie', 'Manager', 'EMPLOYEE',),
     (4, 'Darla', 'Intern', 'VOLUNTEER',), (5, 'Ella', 'Analyst', 'EMPLOYEE',),
-    (6, 'Francis', 'QA', 'EMPLOYEE',), (7, 'George', 'Freshman', 'STUDENT',), ]
+    (6, 'Francis', 'QA', 'EMPLOYEE',), (7, 'George', 'Freshman', 'STUDENT',),
+    (8, 'Harvey', 'Slave', "VOLUNTEER")]
 
 
 class PeopleDatabase:
     _db = None
     db_connect_string = None
 
-    def __init__(self, db_connect_string):
+    def __init__(self, _db_connect_string):
+        self.db_connect_string = _db_connect_string
+        pass
+
+    def connect(self):
         """
         Create the temporary database and fill it.
         """
-        self.db_connect_string = db_connect_string
         self._db = sqlite3.connect(":memory:")
         self._db.execute("CREATE TABLE people(id INT, name TEXT, title TEXT, type TEXT)")
         self._db.executemany(
@@ -65,3 +69,13 @@ class PeopleDatabase:
         result = self._query("SELECT title FROM people WHERE id = {}".format(query_id))
         logging.debug("Completed get_title_by_id.")
         return result[0][0]
+
+    def get_all_people(self):
+        result = self._query("SELECT * FROM people")
+        logging.debug("Completed get_all_people.")
+        return result
+
+    def get_people_by_type(self, query_type):
+        result = self._query("SELECT * FROM people WHERE type = '{}'".format(query_type))
+        logging.debug("Completed get_all_people.")
+        return result
