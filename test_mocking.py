@@ -157,6 +157,8 @@ def test_raises_exception():
     with pytest.raises(people_data.sqlite3.DataError):
         humans.get_name_by_id(120)
 
+
+# Running from commandline w/o py.test
 def main():
     test_student()
     test_employee()
@@ -164,6 +166,7 @@ def main():
     test_raises_exception()
     test_class_patch()
     test_context_manager()
+
 
 if __name__ == "__main__":
     main()
