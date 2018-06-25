@@ -10,15 +10,15 @@ General utilities, particularly logging
 """
 
 
-def initialize_logging(log_id=None, file_log_level=logging.DEBUG,
+def initialize_logging(log_name=None, file_log_level=logging.DEBUG,
         console_log_level=logging.INFO,
         ci_log_name=os.environ.get('CI_LOG_NAME', 'common.log'),
-        fw_root=os.environ.get('WORKSPACE', '.'), verbose=False):
+        logging_directory=os.environ.get('WORKSPACE', '.'), verbose=False):
     """
     This implementation is in-between using the basic logging
     configuration and a fully custom system.
     """
-    if not log_id:
+    if not log_name:
         # Use the root logger. Since we don't have a nice module
         # structure, the __name__ trick doesn't help us and this has one
         # less layer that can get mis-configured. If you use the root
@@ -30,12 +30,12 @@ def initialize_logging(log_id=None, file_log_level=logging.DEBUG,
         # This is so you can give it a name (log_id) if you insist, and
         # it will be a child of the root. The log file will be named
         # after the log_id + '.log'
-        logger = logging.getLogger(log_id)
-        ci_log_name = "{}.log".format(log_id)
+        logger = logging.getLogger(log_name)
+        ci_log_name = "{}.log".format(log_name)
     if verbose:
-        console_log_level = logging.debug
+        console_log_level = logging.DEBUG
     # Log name and path
-    log_file = Path(fw_root) / ci_log_name
+    log_file = Path(logging_directory) / ci_log_name
     log_file.parent.mkdir(parents=True, exist_ok=True)
     # Set the overall lowest level to report
     logger.setLevel(logging.DEBUG)

@@ -21,7 +21,7 @@ import volunteer
 import people_data
 
 # Example of overriding logger defaults.
-utils.initialize_logging(console_log_level=logging.INFO)
+utils.initialize_logging()
 logging.info("Starting Tests...")
 
 _original_author = 'ed.cardinal@wdc.com'
