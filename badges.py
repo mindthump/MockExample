@@ -1,4 +1,11 @@
 # from __future__ import print_function
+"""
+Print decorated name badges from DB.
+Yes, it repeatedly bangs on the same DB.
+It's pretty stupid, but bear with it...
+
+Original Author: ed.cardinal@wdc.com
+"""
 import utils
 import sys
 import argparse
@@ -10,9 +17,6 @@ import volunteer
 
 class BadgeApp(object):
     """
-    Print decorated name badges from DB.
-    Yes, it repeatedly bangs on the same DB.
-    It's pretty stupid, but bear with it...
     """
 
     def __init__(self, init_parameters):
@@ -23,13 +27,6 @@ class BadgeApp(object):
             help='Show all log messages on standard error stream', action='store_true')
         self.args = parser.parse_args(init_parameters)
         self.peopledatabase = None
-
-    def parse_app_arguments(self, app_args):
-        """
-        """
-        self.parser.add_argument('-v', '--verbose',
-            help='Show all log messages on standard error stream', action='store_true')
-        return self.parser.parse_args(app_args)
 
     def init_people_database(self):
         """

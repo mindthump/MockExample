@@ -9,6 +9,8 @@ instantiate you may need to patch the whole class (see test_class_patch
 below).
 
 TODO: Add tests for the 'badges' app's methods?
+
+Original Author: ed.cardinal@wdc.com
 """
 
 import pytest
@@ -23,8 +25,6 @@ import people_data
 # Example of overriding logger defaults.
 utils.initialize_logging()
 logging.info("Starting Tests...")
-
-_original_author = 'ed.cardinal@wdc.com'
 
 
 # Target imports class
@@ -68,7 +68,8 @@ def test_employee(mock_employee_getname):
     employee_name = employee.Employee(1).get_badge_text()
     logging.warning("Employee #1 = '{}'".format(employee_name))
 
-    assert employee_name == "#1 - Bob"  # NOTE: Why don't we assert == "Bob"?  #  We
+    assert employee_name == "#1 - Bob" 
+    # NOTE: Why don't we assert == "Bob"?  #  We
     #  switched the name to Bob when Employee asked the database #  # for it,
     #  but we didn't change what Employee did with it after we #  # switched it. In
     # this  #  case, it applied formatting, so that's what #  # we test against.
@@ -77,7 +78,7 @@ def test_employee(mock_employee_getname):
 # Pass mock object as argument
 def test_volunteer():
     """
-    It's a thing with the door and the world and a thing. (Never mind).
+    It's a thing with a door and the world and a thing. (Never mind).
     """
     _pds = people_data.PeopleDatabase("db://remote_person_ds/")
     _pds.connect()

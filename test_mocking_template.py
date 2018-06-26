@@ -2,6 +2,8 @@
 
 """
 Examples of mocking techniques, with minimal comments
+
+Original Author: ed.cardinal@wdc.com
 """
 
 import pytest
@@ -25,7 +27,7 @@ def test_student(mock_student_getname):
     student_two = Student(2)
     student_two_name = student_two.get_badge_text()
     logging.info("Student #2 name = '{}'".format(student_two_name))
-    assert student_two_name == "Sam"
+    assert student_two_name == "HI! My name is Sam"
 
 
 # Target imports module
@@ -54,13 +56,13 @@ def test_context_manager():
     # Not patched
     unpatched_employee = employee.Employee(1).get_badge_text()
     assert unpatched_employee == "#1 - Alice"
-    with patch(
-            'employee.people_data.PeopleDatabase.get_name_by_id') as \
+
+    with patch('employee.people_data.PeopleDatabase.get_name_by_id') as \
             mock_employee_getname:
         mock_employee_getname.side_effect = ['Bob', 'Tom']
-        patched_employee = employee.Employee(1)
+        patched_employee = employee.Employee(16)
         employee_name = patched_employee.get_badge_text()
-        assert employee_name == "#1 - Bob"
+        assert employee_name == "#16 - Bob"
         second_patched_employee = employee.Employee(105)
         employee_name = second_patched_employee.get_badge_text()
         assert employee_name == "#105 - Tom"
@@ -78,5 +80,6 @@ def test_class_patch(mock_datasource_class):
 # Test call raises exception
 def test_raises_exception():
     humans = people_data.PeopleDatabase("db://remote_person_ds/")
+    humans.connect()
     with pytest.raises(people_data.sqlite3.DataError):
         humans.get_name_by_id(120)

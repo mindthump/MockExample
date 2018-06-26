@@ -7,12 +7,12 @@ This module isn't a mock! It is a "test double", essentially a
 simulator. This will be the _target_ of our mocking. There are both
 basic functions/methods that return a value, and a more general query
 returning an iterable of data structures (rows, JSON, etc.)
+
+Original Author: ed.cardinal@wdc.com
 """
 
 import sqlite3
 import logging
-
-_original_author = 'ed.cardinal@wdc.com'
 
 # TODO: Maybe wait a while here and there to show "cost" savings ;)
 
@@ -24,13 +24,12 @@ people_test_data = [(1, 'Alice', 'Developer', 'EMPLOYEE',),
     (8, 'Harvey', 'Slave', "VOLUNTEER")]
 
 
-class PeopleDatabase:
+class PeopleDatabase(object):
     _db = None
     db_connect_string = None
 
     def __init__(self, _db_connect_string):
         self.db_connect_string = _db_connect_string
-        pass
 
     def connect(self):
         """
@@ -42,7 +41,6 @@ class PeopleDatabase:
             "INSERT INTO people (id, name, title, type) VALUES (?, ?, ?, ?)",
             people_test_data)
         logging.debug("Database initialized.")
-        pass
 
     def _query(self, query_string):
         raw_query_cursor = self._db.execute(query_string)
