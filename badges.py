@@ -40,16 +40,16 @@ class BadgeApp(object):
         self.init_people_database()
         # people = self.peopledatabase.get_all_people()
         students = self.peopledatabase.get_people_by_type('STUDENT')
-        for _student in students:
-            print(student.Student(_student[0]).get_badge_text())
+        for student_ in students:
+            print(student.Student(student_[0]).get_badge_text())
 
         employees = self.peopledatabase.get_people_by_type('EMPLOYEE')
-        for _employee in employees:
-            print(employee.Employee(_employee[0]).get_badge_text())
+        for employee_ in employees:
+            print(employee.Employee(employee_[0]).get_badge_text())
 
         volunteers = self.peopledatabase.get_people_by_type('VOLUNTEER')
-        for _volunteer in volunteers:
-            print(volunteer.Volunteer().get_badge_text(_volunteer[0], self.peopledatabase))
+        for volunteer_ in volunteers:
+            print(volunteer.Volunteer().get_badge_text(volunteer_[0], self.peopledatabase))
 
         return 0
 
