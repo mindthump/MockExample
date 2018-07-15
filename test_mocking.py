@@ -28,7 +28,7 @@ logging.info("Starting Tests...")
 
 
 # Target imports class
-@patch('student.PeopleDatabase.get_name_by_id')
+@patch("student.PeopleDatabase.get_name_by_id")
 def test_student(mock_student_getname):
     """
     A single method is the simplest to patch. The student.py module
@@ -59,7 +59,7 @@ def test_student(mock_student_getname):
 
 
 # Target imports module
-@patch('employee.people_data.PeopleDatabase.get_name_by_id')
+@patch("employee.people_data.PeopleDatabase.get_name_by_id")
 def test_employee(mock_employee_getname):
     """
     The same test, except the target name of the mocked method
@@ -68,12 +68,12 @@ def test_employee(mock_employee_getname):
     employee_name = employee.Employee(1).get_badge_text()
     logging.warning("Employee #1 = '{}'".format(employee_name))
 
-    assert employee_name == "#1 - Bob" 
-    # NOTE: Why don't we assert == "Bob"?  #  We
-    #  switched the name to Bob when Employee asked the database #  # for it,
-    #  but we didn't change what Employee did with it after we #  # switched it. In
-    # this  #  case, it applied formatting, so that's what #  # we test against.
-
+    assert employee_name == "#1 - Bob"
+    # NOTE: Why don't we assert == "Bob"?
+    # We switched the name to Bob when Employee asked the database
+    # for it, but we didn't change what Employee did with it after we
+    # switched it. In this case it applied formatting, so that's what
+    # we test against.
 
 # Pass mock object as argument
 def test_volunteer():
@@ -109,12 +109,13 @@ def test_context_manager():
     unpatched_employee = employee.Employee(1).get_badge_text()
     assert unpatched_employee == "#1 - Alice"
 
-    with patch('employee.people_data.PeopleDatabase.get_name_by_id') as \
-            mock_employee_getname:
+    with patch(
+        "employee.people_data.PeopleDatabase.get_name_by_id"
+    ) as mock_employee_getname:
         # Set a side-effect for our mock object. If it is an iterable
         # each call will return the next value. It could call a function,
         # taking the original arguments.
-        mock_employee_getname.side_effect = ['Bob', 'Tom']
+        mock_employee_getname.side_effect = ["Bob", "Tom"]
 
         patched_employee = employee.Employee(16)
         employee_name = patched_employee.get_badge_text()
@@ -134,7 +135,7 @@ def test_context_manager():
 
 
 # Patch entire class
-@patch('employee.people_data.PeopleDatabase')
+@patch("employee.people_data.PeopleDatabase")
 def test_class_patch(mock_datasource_class):
     """
     Occasionally you need to patch an entire CLASS. One reason might
