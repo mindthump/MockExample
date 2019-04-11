@@ -28,8 +28,7 @@ we are testing running in a real (albeit contrived) context.
 Finally, look at _test_mocking.py_ to see the actual unit tests.
 Each shows a different way that mocking or patching can be applied.
 _test_mocking_template.py_ has the code without all the profuse
-comments, easier to copy and paste. _test_mocking_template.py_ has the
-same code without the commentary to make it easier to copy-and-paste.
+comments, easier to copy and paste.
 
 BTW, this code is not intended to be hardy or safe or efficient, or show
 good design -- it's just for the examples.
