@@ -8,7 +8,7 @@ simulator. This will be the _target_ of our mocking. There are both
 basic functions/methods that return a value, and a more general query
 returning an iterable of data structures (rows, JSON, etc.)
 
-Original Author: ed.cardinal@wdc.com
+Original Author: edc@mindthump.com
 """
 
 import sqlite3
