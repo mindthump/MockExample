@@ -5,7 +5,7 @@ Employee imports the entire people_data module and
 instantiates the PeopleDatabase class through its namespace, then
 uses the get_name_by_id method.
 
-Original Author: ed.cardinal@wdc.com
+Original Author: edc@mindthump.org
 """
 
 import logging

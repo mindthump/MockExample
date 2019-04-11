@@ -4,7 +4,7 @@ Print decorated name badges from DB.
 Yes, it repeatedly bangs on the same DB.
 It's pretty stupid, but bear with it...
 
-Original Author: ed.cardinal@wdc.com
+Original Author: edc@mindthump.org
 """
 import utils
 import sys

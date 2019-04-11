@@ -10,7 +10,7 @@ below).
 
 TODO: Add tests for the 'badges' app's methods?
 
-Original Author: ed.cardinal@wdc.com
+Original Author: edc@mindthump.org
 """
 
 import pytest
@@ -74,6 +74,7 @@ def test_employee(mock_employee_getname):
     # for it, but we didn't change what Employee did with it after we
     # switched it. In this case it applied formatting, so that's what
     # we test against.
+
 
 # Pass mock object as argument
 def test_volunteer():

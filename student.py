@@ -11,7 +11,7 @@ module into this module's namespace, instantiates it and uses the
 instance's get_name_by_id function. Assume for this example it's cheap
 to connect but expensive to query.
 
-Original Author: ed.cardinal@wdc.com
+Original Author: edc@mindthump.org
 """
 
 import logging

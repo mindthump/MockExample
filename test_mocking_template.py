@@ -3,7 +3,7 @@
 """
 Examples of mocking techniques, with minimal comments
 
-Original Author: ed.cardinal@wdc.com
+Original Author: edc@mindthump.org
 """
 
 import pytest
@@ -17,7 +17,7 @@ import people_data
 
 utils.initialize_logging()
 
-_original_author = 'ed.cardinal@wdc.com'
+_original_author = 'edc@mindthump.org'
 
 
 # Target imports class
