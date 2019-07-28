@@ -10,10 +10,14 @@ General utilities, particularly logging
 """
 
 
-def initialize_logging(log_name=None, file_log_level=logging.DEBUG,
-        console_log_level=logging.INFO,
-        ci_log_name=os.environ.get('CI_LOG_NAME', 'common.log'),
-        logging_directory=os.environ.get('WORKSPACE', '.'), verbose=False):
+def initialize_logging(
+    log_name=None,
+    file_log_level=logging.DEBUG,
+    console_log_level=logging.INFO,
+    ci_log_name=os.environ.get("CI_LOG_NAME", "common.log"),
+    logging_directory=os.environ.get("WORKSPACE", "."),
+    verbose=False,
+):
     """
     This implementation is in-between using the basic logging
     configuration and a fully custom system.
@@ -62,13 +66,15 @@ def initialize_logging(log_name=None, file_log_level=logging.DEBUG,
     # RotatingFileHandler: when the current log gets full it
     # automatically rotates the current file to a numbered backup and
     # creates a new empty log.
-    file_handler = logging.handlers.RotatingFileHandler(str(log_file_path), mode='a',
-        maxBytes=10 * 1024 * 1024, backupCount=5)
+    file_handler = logging.handlers.RotatingFileHandler(
+        str(log_file_path), mode="a", maxBytes=10 * 1024 * 1024, backupCount=5
+    )
     # Log level (for this handler only)
     file_handler.setLevel(file_log_level)
     # Formatter to specify the "look" of the output lines (for this handler only)
     file_formatter = logging.Formatter(
-        '%(asctime)s - %(module)s.%(funcName)s() - %(levelname)s - %(message)s')
+        "%(asctime)s - %(module)s.%(funcName)s() - %(levelname)s - %(message)s"
+    )
     file_handler.setFormatter(file_formatter)
     # Add the customized handler to the logging object
     logger.addHandler(file_handler)
@@ -76,7 +82,7 @@ def initialize_logging(log_name=None, file_log_level=logging.DEBUG,
     # Create a Console handler and customize it
     console_handler = logging.StreamHandler()
     console_handler.setLevel(console_log_level)
-    console_formatter = logging.Formatter('%(levelname)s - %(message)s')
+    console_formatter = logging.Formatter("%(levelname)s - %(message)s")
     console_handler.setFormatter(console_formatter)
     logger.addHandler(console_handler)
 

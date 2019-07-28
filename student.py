@@ -25,7 +25,6 @@ MODULE_PEOPLEDATABASE.connect()
 
 
 class Student(object):
-
     def __init__(self, _id):
         self.student_id = _id
         # Q2: What if you instantiate the data source during __init__?

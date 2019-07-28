@@ -22,9 +22,13 @@ class BadgeApp(object):
     def __init__(self, init_parameters):
         """
         """
-        parser = argparse.ArgumentParser(description='Print name badges.')
-        parser.add_argument('-v', '--verbose',
-            help='Show all log messages on standard error stream', action='store_true')
+        parser = argparse.ArgumentParser(description="Print name badges.")
+        parser.add_argument(
+            "-v",
+            "--verbose",
+            help="Show all log messages on standard error stream",
+            action="store_true",
+        )
         self.args = parser.parse_args(init_parameters)
         self.peopledatabase = None
 
@@ -39,17 +43,19 @@ class BadgeApp(object):
         """
         self.init_people_database()
         # people = self.peopledatabase.get_all_people()
-        students = self.peopledatabase.get_people_by_type('STUDENT')
+        students = self.peopledatabase.get_people_by_type("STUDENT")
         for student_ in students:
             print(student.Student(student_[0]).get_badge_text())
 
-        employees = self.peopledatabase.get_people_by_type('EMPLOYEE')
+        employees = self.peopledatabase.get_people_by_type("EMPLOYEE")
         for employee_ in employees:
             print(employee.Employee(employee_[0]).get_badge_text())
 
-        volunteers = self.peopledatabase.get_people_by_type('VOLUNTEER')
+        volunteers = self.peopledatabase.get_people_by_type("VOLUNTEER")
         for volunteer_ in volunteers:
-            print(volunteer.Volunteer().get_badge_text(volunteer_[0], self.peopledatabase))
+            print(
+                volunteer.Volunteer().get_badge_text(volunteer_[0], self.peopledatabase)
+            )
 
         return 0
 

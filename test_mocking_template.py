@@ -17,11 +17,11 @@ import people_data
 
 utils.initialize_logging()
 
-_original_author = 'edc@mindthump.org'
+_original_author = "edc@mindthump.org"
 
 
 # Target imports class
-@patch('student.PeopleDatabase.get_name_by_id')
+@patch("student.PeopleDatabase.get_name_by_id")
 def test_student(mock_student_getname):
     mock_student_getname.return_value = "Sam"
     student_two = Student(2)
@@ -31,7 +31,7 @@ def test_student(mock_student_getname):
 
 
 # Target imports module
-@patch('employee.people_data.PeopleDatabase.get_name_by_id')
+@patch("employee.people_data.PeopleDatabase.get_name_by_id")
 def test_employee(mock_employee_getname):
     mock_employee_getname.return_value = "Bob"
     employee_name = employee.Employee(1).get_badge_text()
@@ -57,9 +57,10 @@ def test_context_manager():
     unpatched_employee = employee.Employee(1).get_badge_text()
     assert unpatched_employee == "#1 - Alice"
 
-    with patch('employee.people_data.PeopleDatabase.get_name_by_id') as \
-            mock_employee_getname:
-        mock_employee_getname.side_effect = ['Bob', 'Tom']
+    with patch(
+        "employee.people_data.PeopleDatabase.get_name_by_id"
+    ) as mock_employee_getname:
+        mock_employee_getname.side_effect = ["Bob", "Tom"]
         patched_employee = employee.Employee(16)
         employee_name = patched_employee.get_badge_text()
         assert employee_name == "#16 - Bob"
@@ -70,7 +71,7 @@ def test_context_manager():
 
 
 # Patch entire class
-@patch('employee.people_data.PeopleDatabase')
+@patch("employee.people_data.PeopleDatabase")
 def test_class_patch(mock_datasource_class):
     mock_datasource_class.return_value.get_name_by_id.return_value = "Bob"
     employee_name = employee.Employee(1).get_badge_text()

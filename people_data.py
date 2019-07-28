@@ -17,11 +17,16 @@ import logging
 # TODO: Maybe wait a while here and there to show "cost" savings ;)
 
 # Fake data to fill our fake database.
-people_test_data = [(1, 'Alice', 'Developer', 'EMPLOYEE',),
-    (2, 'Brenda', 'Sophomore', 'STUDENT',), (3, 'Charlie', 'Manager', 'EMPLOYEE',),
-    (4, 'Darla', 'Intern', 'VOLUNTEER',), (5, 'Ella', 'Analyst', 'EMPLOYEE',),
-    (6, 'Francis', 'QA', 'EMPLOYEE',), (7, 'George', 'Freshman', 'STUDENT',),
-    (8, 'Harvey', 'Slave', "VOLUNTEER")]
+people_test_data = [
+    (1, "Alice", "Developer", "EMPLOYEE"),
+    (2, "Brenda", "Sophomore", "STUDENT"),
+    (3, "Charlie", "Manager", "EMPLOYEE"),
+    (4, "Darla", "Intern", "VOLUNTEER"),
+    (5, "Ella", "Analyst", "EMPLOYEE"),
+    (6, "Francis", "QA", "EMPLOYEE"),
+    (7, "George", "Freshman", "STUDENT"),
+    (8, "Harvey", "Slave", "VOLUNTEER"),
+]
 
 
 class PeopleDatabase(object):
@@ -36,10 +41,13 @@ class PeopleDatabase(object):
         Create the temporary database and fill it.
         """
         self._db = sqlite3.connect(":memory:")
-        self._db.execute("CREATE TABLE people(id INT, name TEXT, title TEXT, type TEXT)")
+        self._db.execute(
+            "CREATE TABLE people(id INT, name TEXT, title TEXT, type TEXT)"
+        )
         self._db.executemany(
             "INSERT INTO people (id, name, title, type) VALUES (?, ?, ?, ?)",
-            people_test_data)
+            people_test_data,
+        )
         logging.debug("Database initialized.")
 
     def _query(self, query_string):
@@ -48,7 +56,9 @@ class PeopleDatabase(object):
         if not result:
             raise self._db.DataError(
                 "No matching results found in database for query: '{}'".format(
-                    query_string))
+                    query_string
+                )
+            )
         logging.debug("Completed query, returning results.")
         return result
 
@@ -74,6 +84,8 @@ class PeopleDatabase(object):
         return result
 
     def get_people_by_type(self, query_type):
-        result = self._query("SELECT * FROM people WHERE type = '{}'".format(query_type))
+        result = self._query(
+            "SELECT * FROM people WHERE type = '{}'".format(query_type)
+        )
         logging.debug("Completed get_all_people.")
         return result
