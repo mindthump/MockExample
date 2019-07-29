@@ -36,7 +36,7 @@ Original Author: edc@mindthump.org
 """
 
 import pytest
-from mock import patch, MagicMock
+from unittest.mock import patch, MagicMock
 import logging
 import utils
 import employee  # importing the entire module

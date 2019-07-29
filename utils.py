@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from __future__ import print_function
-from pathlib2 import Path
+from pathlib import Path
 import os
 import logging
 import logging.handlers
