@@ -12,7 +12,7 @@ import argparse
 from people_data import PeopleDatabase
 import student
 import employee
-import volunteer
+from volunteer import Volunteer
 
 
 class BadgeApp(object):
@@ -53,9 +53,7 @@ class BadgeApp(object):
 
         volunteers = self.peopledatabase.get_people_by_type("VOLUNTEER")
         for volunteer_ in volunteers:
-            print(
-                volunteer.Volunteer().get_badge_text(volunteer_[0], self.peopledatabase)
-            )
+            print(Volunteer().get_badge_text(volunteer_[0], self.peopledatabase))
 
         return 0
 

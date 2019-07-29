@@ -1,12 +1,16 @@
 #!/usr/bin/env python
 
 """
-Wrapper around sqlite3 database
+A wrapper around sqlite3 database. The sqlite3 database is a singleton.
 
 This module isn't a mock! It is a "test double", essentially a
 simulator. This will be the _target_ of our mocking. There are both
 basic functions/methods that return a value, and a more general query
 returning an iterable of data structures (rows, JSON, etc.)
+
+For simplicity, clients access specific columns in results by number.
+
+TODO: Make this a Falcon server app.
 
 Original Author: edc@mindthump.org
 """
@@ -30,6 +34,9 @@ people_test_data = [
 
 
 class PeopleDatabase(object):
+    """
+    """
+
     _db = None
     db_connect_string = None
 

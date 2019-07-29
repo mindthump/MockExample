@@ -19,8 +19,8 @@ class Volunteer(object):
     def __init__(self):
         pass
 
-    @staticmethod
+    @classmethod
     # For mocking, the fact that get_title_by_id is a static method is irrelevant.
-    def get_badge_text(_id, data_source):
+    def get_badge_text(cls, _id, data_source):
         _title = data_source.get_title_by_id(_id)
         return "** {} **".format(_title)
