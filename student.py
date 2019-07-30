@@ -14,6 +14,7 @@ it's cheap to connect but expensive to query.
 Original Author: edc@mindthump.org
 """
 
+import inspect
 import logging
 from people_data import PeopleDatabase
 
@@ -48,7 +49,7 @@ class Student(object):
             )
         )
 
-        # A: In the end the results are all the same
+        # A: In the end the results are all the same, mocked or not mocked
         assert method_level_name == class_level_name == module_level_name
         # We only really need to return one of these
         return "HI! My name is {}".format(method_level_name)
