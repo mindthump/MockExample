@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 This class uses the datasource 'PeopleDatabase' to fill relevant fields
 on the object. It accesses the source from a number of different

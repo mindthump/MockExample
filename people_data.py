@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 A wrapper around sqlite3 database. The sqlite3 database is a singleton.
 

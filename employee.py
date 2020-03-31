@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 Employee imports the entire people_data module and
 instantiates the PeopleDatabase class through its namespace, then

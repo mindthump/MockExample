@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 Volunteer doesn't know intrinsically about the actual source of the
 data, it needs to be instantiated outside and passed in.

@@ -1,4 +1,5 @@
-# from __future__ import print_function
+#!/usr/bin/env python
+
 """
 Print decorated name badges from DB.
 Yes, it repeatedly bangs on the same DB.

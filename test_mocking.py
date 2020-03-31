@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 The whole point of mocking is to monitor and/or alter the _behavior_
 of running objects **without changing the original code**.
