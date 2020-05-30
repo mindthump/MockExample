@@ -7,4 +7,4 @@ COPY . /app
 
 WORKDIR /app
 
-CMD /bin/sh
+ENTRYPOINT ["python", "badges.py"]
