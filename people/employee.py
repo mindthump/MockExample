@@ -7,7 +7,7 @@ Original Author: edc@mindthump.org
 """
 
 import logging
-import people_data
+from people import people_data
 
 
 class Employee(object):

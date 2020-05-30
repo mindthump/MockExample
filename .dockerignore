@@ -1,0 +1,11 @@
+# Ignore everything...
+*
+
+# ... except these:
+!people/
+!badges.py
+!test_mocking.py
+
+# But always exclude these:
+people/.pytest_cache
+people/*.log

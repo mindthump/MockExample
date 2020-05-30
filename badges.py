@@ -7,13 +7,11 @@ It's pretty stupid, but bear with it...
 
 Original Author: edc@mindthump.org
 """
-import utils
 import sys
 import argparse
-from people_data import PeopleDatabase
-import student
-import employee
-from volunteer import Volunteer
+from people.people_data import PeopleDatabase
+from people import student, employee, utils
+from people.volunteer import Volunteer
 
 
 class BadgeApp(object):

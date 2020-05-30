@@ -37,11 +37,8 @@ Original Author: edc@mindthump.org
 import pytest
 from unittest.mock import patch, MagicMock
 import logging
-import utils
-import employee  # importing the entire module
-from student import Student  # importing a specific class
-import volunteer
-import people_data
+from people.student import Student  # importing a specific class
+from people import people_data, volunteer, employee, utils
 
 # Example of overriding logger defaults.
 utils.initialize_logging(console_log_level=logging.ERROR)
@@ -50,7 +47,7 @@ logging.info("Starting Tests...")
 
 # ---------------- Basic method mocking
 # NOTE: MAKE THE MOCK
-@patch("people_data.PeopleDatabase.get_name_by_id")
+@patch("people.people_data.PeopleDatabase.get_name_by_id")
 def test_student(mock_student_getname_method):
     """
     Our patching target is the get_name_by_id() method on
@@ -137,7 +134,7 @@ def test_context_manager():
 
     # NOTE: MAKE THE MOCK
     with patch(
-        "people_data.PeopleDatabase.get_name_by_id"
+        "people.people_data.PeopleDatabase.get_name_by_id"
     ) as mock_employee_getname:
         # Set a side-effect for our mock object. If the 'side_effect' is
         # an iterable, each call will return the next value. It could
@@ -169,7 +166,7 @@ def test_context_manager():
 
 # ---------------- Patch entire class
 # NOTE: MAKE THE MOCK
-@patch("people_data.PeopleDatabase")
+@patch("people.people_data.PeopleDatabase")
 def test_class_patch(mock_datasource_class):
     """
     Occasionally you need to patch an entire CLASS. One reason might

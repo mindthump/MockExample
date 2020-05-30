@@ -12,9 +12,8 @@ it's cheap to connect but expensive to query.
 Original Author: edc@mindthump.org
 """
 
-import inspect
 import logging
-from people_data import PeopleDatabase
+from people.people_data import PeopleDatabase
 
 # Q1: What is the _result_ we return from the get_name_by_id() method
 # if you instantiate the target of the mocking (the data source in this

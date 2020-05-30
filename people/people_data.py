@@ -8,7 +8,7 @@ returning an iterable of data structures (rows, JSON, etc.)
 
 For simplicity, clients access specific columns in results by number.
 
-TODO: Make this a Falcon server app.
+TODO: Make this a Falcon server.
 
 Original Author: edc@mindthump.org
 """
