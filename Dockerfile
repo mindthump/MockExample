@@ -7,7 +7,6 @@ COPY . /app
 
 WORKDIR /app
 
-ENTRYPOINT ["python"]
-# Testing CMD: "-m pytest -o junit_family=xunit2 --junitxml=xunit.xml
-CMD ["badges.py"]
+# Testing command-line: "pytest -o junit_family=xunit2 --junitxml=xunit.xml"
+CMD ["python", "badges.py"]
 
