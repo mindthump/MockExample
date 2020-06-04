@@ -1,4 +1,4 @@
-# MockExample
+# MockExample (SPX Edition)
 
 ## Project Intention
 These are simple, straightforward examples of mocking in Python unit
