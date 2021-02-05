@@ -1,5 +1,4 @@
-# MockExample (SPX Edition)
-
+# MockExample
 ## Project Intention
 These are simple, straightforward examples of mocking in Python unit
 tests. What I'm after is pragmatic heuristics to get you started, not an
