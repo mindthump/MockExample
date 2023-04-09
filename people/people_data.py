@@ -92,5 +92,5 @@ class PeopleDatabase(object):
         result = self._query(
             "SELECT * FROM people WHERE type = '{}'".format(query_type)
         )
-        logging.debug("Completed get_all_people.")
+        logging.debug("Completed get_people_by_type.")
         return result
