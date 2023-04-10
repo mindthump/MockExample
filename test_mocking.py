@@ -6,7 +6,7 @@ Let me say that python mocks are amazing. I like to use a metaphor
 that a mock is a sci-fi robot spy with a cloaking device. (Or like the
 super-realistic masks in 'Mission: Impossible'.) It's a chameleon that
 will confidently answer any question asked of it. The answer can be a
-programmed response or it can spawn other mocks.
+programmed response, or it can spawn other mocks.
 
 There are three simple phases to a mock:
 
