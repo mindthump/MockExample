@@ -1,5 +1,0 @@
-*.log
-.idea/
-xunit.xml
-
-**/*.pyc
