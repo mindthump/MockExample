@@ -42,11 +42,13 @@ class PeopleDatabase(object):
     grab this singleton using the classname method `PeopleDatabase()`.
     """
 
-    # This is the database connection. It's "protected" and only accessed
-    # by the `_query()` method after it is created.
     _db = None
 
     def __new__(cls):
+        """
+        This is the database connection. It's "protected" and only accessed
+        by the `_query()` method after it is created.
+        """
         if not hasattr(cls, "instance"):
             cls.instance = super(PeopleDatabase, cls).__new__(cls)
             cls.instance._db = sqlite3.connect(":memory:")

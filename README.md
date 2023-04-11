@@ -4,49 +4,67 @@
 
 Mocking is a technique that allows you to run tests that would otherwise
 be impossible or at least inadvisable: perhaps it's overly complex,
-non-deterministic, restricted, or prohibitively expensive n terms of
-money, resources, time, etc. Mocking in this sense means to fake or
-substitute a behavior or value, and is used to override the actual
+non-deterministic, restricted, or prohibitively expensive in terms
+of money, resources, time, etc. Mocking in this sense means to fake
+or substitute some piece of code, and is used to override the actual
 behavior of running code in a fast, inexpensive, and predictable manner.
+(The code that is overridden or replaced is said to be "mocked out".)
 
 This article is focused on unit tests that a developer creates to test
 the smallest units of functionality, but the concepts and techniques can
 be applied at higher levels of testing as well. It is not intended to be
 a deep technical study of Python mocking, but rather an introduction to
 get you interested and maybe even excited (!) to use this facility. I
-encourage you to read [the official documentation](https://docs.python.org/3/library/unittest.mock.html#module-unittest.mock) and the many, many other
-articles about this subject.
+encourage you to read
+[the official documentation](https://docs.python.org/3/library/unittest.mock.html#module-unittest.mock)
+and the many, many other articles about this subject.
+
+Python mocks are amazing. I like to use a metaphor that a mock is
+a sci-fi robot spy, with a cloaking device (or the super-realistic
+masks in 'Mission: Impossible'). It's a versatile chameleon that will
+confidently answer any question asked of it as if it were the real
+thing. The answer can be a static or computed response (the return
+value), a change of state, or a back-and-forth 'conversation'. Mocks can
+automatically spawn other mocks as needed. They can also give other kinds
+of information such as how many times a mocked out function was called
+(or if it was called at all) or the specific values it returned to the
+caller. It can also generate "side effects" [[INSERT DEFN]].
+
+## Important Warnings
+
+Mocking without further testing can be dangerous! Should the code you
+have mocked out undergo significant change without your knowledge, your
+test would not be aware of it and could give you a "false passing"
+evaluation. At some point during the testing process (like feature tests
+or acceptance tests) you *must* test against the actual code, or risk
+critical failures later. Be careful what and where you are mocking.
+
+Good mocking relies on good unit testing practices in general, which
+in turn rely on good software design practices. Take a look at Dave
+Farley's YouTube videos for
+[some terrific advice](https://www.youtube.com/watch?v=v6hP2MXoVrI)
+(about many things!).
 
 ## A Testing Scenario
 
-Let's say you want to test a method that generates a formatted message
-about availability for a given a part number. To do this, it has to
-make a call to a service on an external system that takes a very long
-time to execute.
+Let's say you want to test a method that formats an email based on the
+address returned from an external system that takes a very long time to
+return.
 
-Your test is intended to only verify the content and formatting of the
-message -- you do not want to test the external system's behavior.
-(That's a different test.) You want to check the message generated for
-various values returned from the external system -- *without* actually
-calling the external system or altering the original code just to
-accommodate the test.
+You want to check your code against various values returned from the
+external system -- *without* actually calling the external system, or
+altering the original code just to accommodate the test. (Yes, I have
+seen production code with `if TEST_MODE return True`.)
 
-To accomplish this, you "mock out" (replace) the call to the external
-system during the test and instead substitute known values that you can
-use to verify the message content. In other words, you are not mocking
-out the code under test itself; you are mocking out something the code
-under test is using, at the exact moment it is being used.
-
-Python mocks are amazing. I like to use a metaphor
-that a mock is a sci-fi robot spy, with a cloaking device or the
-super-realistic masks in 'Mission: Impossible'. It's a versatile
-chameleon that will confidently answer any question asked of it as if
-it were the real thing. The answer can be a programmed response, or it
-can spawn other mocks as needed. Mocks can also give other kinds of
-information such as how many times a mocked out function was called or
-the specific values it returned to the caller. It can also generate
-"side effects" [[INSERT DEFN]].
-
+Your test in this scenario is intended only to verify the email is
+formatted correctly -- you're not testing the external system here.
+(That's a different set of tests.) Mock out the parts of *your* code
+that __use__ the external code but not the external code directly. For
+example, don't create a monster mock that acts like an entire DBMS. In
+the unit test, mock out your method that fetches a user's email address
+from the database so it returns specific addresses. Then, in feature or
+acceptance tests, check that the database really returns the expected
+rows so your code returns the correct email addresses.
 
 # How Do I Use Mocking?
 
