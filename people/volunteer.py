@@ -18,8 +18,11 @@ class Volunteer(object):
         pass
 
     @classmethod
-    # For mocking, the fact that get_title_by_id is a static method is irrelevant.
-    def get_badge_text(cls, _id, data_source):
-        _title = data_source.get_title_by_id(_id)
-        _name = data_source.get_name_by_id(_id)
-        return f"** {_name} ({_title}) **"
+    # For mocking, the fact that get_title_by_id is a
+    # classmethod (or staticmethod) is irrelevant. What is important is
+    # where it is located in the code. (Technically, the
+    # namespace... but don't worry about that.)
+    def get_badge_text(cls, _id, people_database):
+        volunteer_title = people_database.get_title_by_id(_id)
+        volunteer_name = people_database.get_name_by_id(_id)
+        return f"** {volunteer_name} ({volunteer_title}) **"

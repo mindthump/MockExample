@@ -8,6 +8,10 @@ import logging
 from people.student import Student  # importing a specific class
 from people import people_data, volunteer, employee, utils
 
+# Initialize the database. We only need to do this because
+# we show a few examples of "real" calls for contrast.
+people_data.PeopleDatabase.initialize_db()
+
 # Example of overriding logger defaults.
 utils.initialize_logging(console_log_level=logging.ERROR)
 logging.info("Starting Tests...")
@@ -19,8 +23,8 @@ logging.info("Starting Tests...")
 def test_decorator(mock_student_get_title_method, mock_student_get_name_method):
     """
     NOTE: MAKE THE MOCK
-    Here the mock is created though the function decorator. Our patching
-    target is the `get_name_by_id()` and `get_title_by_id()` methods on the
+    Here the mock is created though the function decorator above. Our patching
+    targets are the `get_name_by_id()` and `get_title_by_id()` methods on the
     PeopleDatabase class in
     the people_data module. The patch target is usually referred to by
     "<module>.<class>.<method>".
@@ -58,7 +62,7 @@ def test_decorator(mock_student_get_title_method, mock_student_get_name_method):
     student_two = Student(2)
     # NOTE: FIRE IN THE HOLE
     student_two_badge_text = student_two.get_badge_text()
-    logging.info("Student #2 name = '{}'".format(student_two_badge_text))
+    logging.info(f"Student #2 name = '{student_two_badge_text}'")
 
     # But the real Student #2 is Brenda -- we avoided the database fetch.
     assert student_two_badge_text == "HI! My name is Sam (Sophomore at UCLA)"
@@ -76,8 +80,8 @@ def test_manual_mock():
     # for this. For volunteers, `get_badge_text()` is a class method.
     # It gets the badge text using a database reference passed as a
     # parameter.
-    people_datasource = people_data.PeopleDatabase()
-    title = volunteer.Volunteer.get_badge_text(4, people_datasource)
+    people_database = people_data.PeopleDatabase()
+    title = volunteer.Volunteer.get_badge_text(4, people_database)
     assert title == "** Darla (Intern) **"
 
     # NOTE: MAKE THE MOCK

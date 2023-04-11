@@ -1,7 +1,6 @@
 """
-The database is a wrapper around an in-memory sqlite3 database. The
-database is a singleton to simplify the example, representing a resource
-that lives "out there somewhere".
+This class is a wrapper around an in-memory sqlite3 database. The
+database represents a resource that lives "out there somewhere".
 
 This class will be the _target_ of our mocking. There are basic
 functions/methods that return a value, and more general queries
@@ -36,31 +35,23 @@ people_test_data = [
 
 class PeopleDatabase(object):
     """
-    Create the temporary database and fill it. Using `__new__()` is
-    a classic Python singleton pattern implementation. There is no
-    `__init__()` because we don't want to run code every time we
-    grab this singleton using the classname method `PeopleDatabase()`.
     """
+    # Class variable; each call to `connect()` for an in-memory DB is a new instance
+    connection = sqlite3.connect(":memory:")
 
-    _db = None
-
-    def __new__(cls):
+    @classmethod
+    def initialize_db(cls):
         """
-        This is the database connection. It's "protected" and only accessed
-        by the `_query()` method after it is created.
+        Fill the database with data from the list of tuples above.
         """
-        if not hasattr(cls, "instance"):
-            cls.instance = super(PeopleDatabase, cls).__new__(cls)
-            cls.instance._db = sqlite3.connect(":memory:")
-            cls.instance._db.execute(
-                "CREATE TABLE people(id INT, name TEXT, title TEXT, type TEXT)"
-            )
-            cls.instance._db.executemany(
-                "INSERT INTO people (id, name, title, type) VALUES (?, ?, ?, ?)",
-                people_test_data,
-            )
-            logging.debug("Database initialized.")
-        return cls.instance
+        cls.connection.execute(
+            "CREATE TABLE people(id INT, name TEXT, title TEXT, type TEXT)"
+        )
+        cls.connection.executemany(
+            "INSERT INTO people (id, name, title, type) VALUES (?, ?, ?, ?)",
+            people_test_data,
+        )
+        logging.debug("Database initialized.")
 
     def _query(self, query_string):
         """
@@ -70,11 +61,11 @@ class PeopleDatabase(object):
         """
         # Wait a while here to show "cost" ;)
         time.sleep(2)
-        raw_query_cursor = self._db.execute(query_string)
+        raw_query_cursor = self.connection.execute(query_string)
         result = raw_query_cursor.fetchall()
         # We're raising this error on purpose, to investigate `pytest.raises()`
         if not result:
-            raise self._db.DataError(
+            raise self.connection.DataError(
                 "No matching results found in database for query: '{}'".format(
                     query_string
                 )

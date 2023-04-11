@@ -27,18 +27,22 @@ class BadgeApp(object):
         )
         self.args = parser.parse_args(init_parameters)
         self.peopleDatabase = PeopleDatabase()
+        PeopleDatabase.initialize_db()
 
     def run(self):
         """ """
         students = self.peopleDatabase.get_people_by_type("STUDENT")
+        print("------- STUDENTS -------")
         for student_ in students:
             print(student.Student(student_[0]).get_badge_text())
 
         employees = self.peopleDatabase.get_people_by_type("EMPLOYEE")
+        print("------- EMPLOYEES -------")
         for employee_ in employees:
             print(employee.Employee(employee_[0]).get_badge_text())
 
         volunteers = self.peopleDatabase.get_people_by_type("VOLUNTEER")
+        print("------- VOLUNTEERS -------")
         for volunteer_ in volunteers:
             print(Volunteer().get_badge_text(volunteer_[0], self.peopleDatabase))
 
