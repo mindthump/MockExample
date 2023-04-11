@@ -1,63 +1,76 @@
 """
-A wrapper around sqlite3 database. The sqlite3 database is a singleton.
+The database is a wrapper around an in-memory sqlite3 database. The
+database is a singleton to simplify the example, representing a resource
+that lives "out there somewhere".
 
-This module isn't a mock! It is a "test double", essentially a
-simulator. This will be the _target_ of our mocking. There are both
-basic functions/methods that return a value, and a more general query
-returning an iterable of data structures (rows, JSON, etc.)
+This class will be the _target_ of our mocking. There are basic
+functions/methods that return a value, and more general queries
+returning iterables of data structures (rows, JSON, etc.)
 
-For simplicity, clients access specific columns in results by number.
+IMPORTANT: For simplicity in our example, clients access specific
+columns in results by number. If needed we could get the column names
+from the query's `description` attribute.
 
-TODO: Make this a Falcon server.
+And there is no error checking at all -- this is just an example!
 
 Original Author: edc@mindthump.org
 """
 
 import sqlite3
 import logging
+import time
 
-# TODO: Maybe wait a while here and there to show "cost" savings ;)
 
-# Fake data to fill our fake database.
+# Data to fill our test database.
 people_test_data = [
     (1, "Alice", "Developer", "EMPLOYEE"),
-    (2, "Brenda", "Sophomore", "STUDENT"),
+    (2, "Brenda", "Senior at Cal", "STUDENT"),
     (3, "Charlie", "Manager", "EMPLOYEE"),
     (4, "Darla", "Intern", "VOLUNTEER"),
     (5, "Ella", "Analyst", "EMPLOYEE"),
     (6, "Francis", "QA", "EMPLOYEE"),
-    (7, "George", "Freshman", "STUDENT"),
-    (8, "Harvey", "Slave", "VOLUNTEER"),
+    (7, "George", "Freshman at Stanford", "STUDENT"),
+    (8, "Harvey", "Charlie's Friend", "VOLUNTEER"),
 ]
 
 
 class PeopleDatabase(object):
     """
+    Create the temporary database and fill it. Using `__new__()` is
+    a classic Python singleton pattern implementation. There is no
+    `__init__()` because we don't want to run code every time we
+    grab this singleton using the classname method `PeopleDatabase()`.
     """
 
+    # This is the database connection. It's "protected" and only accessed
+    # by the `_query()` method after it is created.
     _db = None
-    db_connect_string = None
 
-    def __init__(self, _db_connect_string):
-        self.db_connect_string = _db_connect_string
-
-    def connect(self):
-        """
-        Create the temporary database and fill it.
-        """
-        self._db = sqlite3.connect(":memory:")
-        self._db.execute(
-            "CREATE TABLE people(id INT, name TEXT, title TEXT, type TEXT)"
-        )
-        self._db.executemany(
-            "INSERT INTO people (id, name, title, type) VALUES (?, ?, ?, ?)",
-            people_test_data,
-        )
-        logging.debug("Database initialized.")
+    def __new__(cls):
+        if not hasattr(cls, "instance"):
+            cls.instance = super(PeopleDatabase, cls).__new__(cls)
+            cls.instance._db = sqlite3.connect(":memory:")
+            cls.instance._db.execute(
+                "CREATE TABLE people(id INT, name TEXT, title TEXT, type TEXT)"
+            )
+            cls.instance._db.executemany(
+                "INSERT INTO people (id, name, title, type) VALUES (?, ?, ?, ?)",
+                people_test_data,
+            )
+            logging.debug("Database initialized.")
+        return cls.instance
 
     def _query(self, query_string):
+        """
+        A generic method to get all the returned rows to a list, catch some errors,
+        do some logging, and sit around doing nothing for a short time to represent an
+        "expensive" resource.
+        """
+        # Wait a while here to show "cost" ;)
+        time.sleep(2)
         raw_query_cursor = self._db.execute(query_string)
         result = raw_query_cursor.fetchall()
+        # We're raising this error on purpose, to investigate `pytest.raises()`
         if not result:
             raise self._db.DataError(
                 "No matching results found in database for query: '{}'".format(
@@ -69,9 +82,9 @@ class PeopleDatabase(object):
 
     def get_name_by_id(self, query_id):
         """
-        This is the primary method we will patch.
-        The presumption is that going out to the real resource is an "expensive"
-        operation (time, money, network, etc.), not suitable in a unit test.
+        This is the primary method we will patch. There is nothing
+        special here to accommodate tests, it's just ordinary code; that
+        is the true beauty of the mocking techniques.
         """
         result = self._query("SELECT name FROM people WHERE id = {}".format(query_id))
         # There should be :) only one value in one record.

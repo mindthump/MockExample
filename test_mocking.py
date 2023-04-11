@@ -1,36 +1,4 @@
 """
-The whole point of mocking is to monitor and/or alter the _behavior_
-of running objects **without changing the original code**.
-
-Let me say that python mocks are amazing. I like to use a metaphor
-that a mock is a sci-fi robot spy with a cloaking device. (Or like the
-super-realistic masks in 'Mission: Impossible'.) It's a chameleon that
-will confidently answer any question asked of it. The answer can be a
-programmed response, or it can spawn other mocks.
-
-There are three simple phases to a mock:
-
-1. MAKE THE MOCK
-A mock is usually created by
-- instantiating the MagicMock() class directly
-- patching, using a decorator or context manager
-
-Patching is overriding existing code at execution time. Patch as small
-as you can; whenever possible only the specific behavior that is
-actually _used_, such as a single method's return value. However, if a
-resource class is expensive or impossible to instantiate you may need to
-patch the whole class (see test_class_patch below).
-
-2. ARM THE MOCK
-Configure the mock before deployment. Often the mock either has a
-payload to deliver as a return_value on a callable, or some other
-behavior as a side_effect().
-
-3. FIRE IN THE HOLE
-You trigger the behavior exactly like you would if you were using the
-real resource: the code under test doesn't change at all. How cool is
-that?
-
 Original Author: edc@mindthump.org
 """
 
@@ -45,80 +13,103 @@ utils.initialize_logging(console_log_level=logging.ERROR)
 logging.info("Starting Tests...")
 
 
-# ---------------- Basic method mocking
-# NOTE: MAKE THE MOCK
+# ---------------- Decorate the function with a mock
 @patch("people.people_data.PeopleDatabase.get_name_by_id")
-def test_student(mock_student_getname_method):
+@patch("people.people_data.PeopleDatabase.get_title_by_id")
+def test_decorator(mock_student_get_title_method, mock_student_get_name_method):
     """
-    Our patching target is the get_name_by_id() method on
-    the PeopleDatabase class in the people_data module. The patch target
-    is usually referred to by "<module>.<class>.<method>".
+    NOTE: MAKE THE MOCK
+    Here the mock is created though the function decorator. Our patching
+    target is the `get_name_by_id()` and `get_title_by_id()` methods on the
+    PeopleDatabase class in
+    the people_data module. The patch target is usually referred to by
+    "<module>.<class>.<method>".
 
-    @patch injects a new positional parameter to the decorated
-    call signature, which we name 'mock_student_getname_method'
-    in this case. The mock library pre-fills it with a MagicMock()
-    object that will be substituted whenever the original
-    PeopleDatabase.get_name_by_id() method _would_ have been
-    called without the patch.
+    @patch injects new positional parameters to the decorated call
+    signature, which we name 'mock_student_get_name_method' and
+    'mock_student_get_title_method' in this case. (Note that when using
+    more than one decorator, the added parameters appear in the reverse
+    order of the decorators, from top to bottom.) The mock library
+    automatically substitutes MagicMock() objects
+    whenever the original methods _would_ have been called without the
+    patch. However, only those two methods are overridden; calls to a
+    different method would return the real results.
+
+    Be aware that this technique mocks out the target method for any and
+    all uses throughout the test function. If you need to mock only some
+    calls, you will need to use a different technique.
     """
 
-    # Set the value which our mock object will return when the
-    # get_name_by_id() function is called. "Sam" never appears in the data, so it
-    # also acts as a guard from accidental false-positive tests.
     # NOTE: ARM THE MOCK
-    mock_student_getname_method.return_value = "Sam"
+    # Set the value which our mock object will return when the
+    # get_name_by_id() function is called. "Sam" never appears in the
+    # data, so it also acts as a guard against accidental false-positive
+    # tests.
+    mock_student_get_name_method.return_value = "Sam"
+    mock_student_get_title_method.return_value = "Sophomore at UCLA"
 
-    # TEST: Students should have "Hi!..." and name in badge text.
-    # This looks just like a real call to the get_badge_text method
-    # (e.g., in badges.py). We don't refer to the mock at all here; it's
-    # already in place. The method's 'id' parameter is immaterial in this
-    # case - since we override the call and fake the return value, the
-    # input doesn't go anywhere.
+    # TEST: Students should have "HI!..." with their name and title
+    # in the badge text. This looks just like a real call to the
+    # `get_badge_text()` method (e.g., in badges.py). We don't refer
+    # to the mock at all here; it's already in place because of the
+    # decorator. The method's 'id' parameter is immaterial in this case
+    # - since we override the call and fake the return value, the input
+    # doesn't go anywhere.
     student_two = Student(2)
     # NOTE: FIRE IN THE HOLE
     student_two_badge_text = student_two.get_badge_text()
     logging.info("Student #2 name = '{}'".format(student_two_badge_text))
 
     # But the real Student #2 is Brenda -- we avoided the database fetch.
-    assert student_two_badge_text == "HI! My name is Sam"
+    assert student_two_badge_text == "HI! My name is Sam (Sophomore at UCLA)"
 
 
 # ---------------- Pass mock object as argument
-def test_volunteer():
+def test_manual_mock():
     """
     It's a thing with a door and the world and a thing. (Never mind.)
     """
-    people_datasource = people_data.PeopleDatabase("db://remote_person_ds/")
-    people_datasource.connect()
+    # First, for contrast, is the 'real' value test using the DB. We
+    # could not do this in the `test_decorator()` example above, because
+    # the `get_badge_text()` method had already been mocked out by the
+    # decorator for the entire function. We need the real database
+    # for this. For volunteers, `get_badge_text()` is a class method.
+    # It gets the badge text using a database reference passed as a
+    # parameter.
+    people_datasource = people_data.PeopleDatabase()
     title = volunteer.Volunteer.get_badge_text(4, people_datasource)
-    assert title == "** Intern **"
+    assert title == "** Darla (Intern) **"
 
-    # Instead of patching a real object with a mock object, we're
-    # creating the mock ourselves and sending it "spelunking" into the
-    # function as an argument. This is the technique most explanations
-    # of mocking start with.
     # NOTE: MAKE THE MOCK
+    # Instead of patching a particular method, we're creating the mock
+    # ourselves and sending it "spelunking" into the function as an
+    # argument. (Most explanations of mocking start with this is the
+    # technique.) Begin by creating a mock of the whole database object.
     mock_people_datasource = MagicMock()
-    # Again, what the callable does with it is up to them, so equip your
-    # mock accordingly. Give it a get_title_by_id method and give that
-    # method a static return value.
-    # NOTE: ARM THE MOCK
-    mock_people_datasource.get_title_by_id.return_value = "Slave"
 
-    # TEST: Volunteers just have their title on the badge
+    # NOTE: ARM THE MOCK
+    # What the called code does with it is up to them, so equip your
+    # mock accordingly. Give it a `get_title_by_id()` method, which
+    # itself is a MagicMock created just by using it. Give that method a
+    # static return value. Do the same with `get_name_by_id()`.
+    mock_people_datasource.get_title_by_id.return_value = "Satisfied User"
+    mock_people_datasource.get_name_by_id.return_value = "Daisy"
+
     # NOTE: FIRE IN THE HOLE
     title = volunteer.Volunteer.get_badge_text(4, mock_people_datasource)
-    assert title == "** Slave **"
-    # Demonstrate we actually called the mock once.
+    assert title == "** Daisy (Satisfied User) **"
+    # Demonstrate we actually called the mock exactly once using the
+    # `call_count()` method.
     assert mock_people_datasource.get_title_by_id.call_count == 1
 
 
 # ---------------- Patch as context manager
 def test_context_manager():
     """
-    'patch' can be used in a context manager ('with ...'). This style is
-    good when you want to patch a function during only part of a test.
-
+    'patch' can be used in a context manager ('with ...'). It works a
+    lot like the first "test_decorator" example, but does not patch the
+    entire function. Like the manual mocking example, this style is good
+    when you want to patch a function during only part of a test.
     """
 
     # Not patched
@@ -126,12 +117,14 @@ def test_context_manager():
     unpatched_employee_badge = unpatched_employee.get_badge_text()
     assert unpatched_employee_badge == "#1 - Alice"
 
+    # JUST FOR FUN
     # Test that a call raises an expected exception; from py.test, not mocking!
     # IMHO this is a lot more readable than try/except.
     with pytest.raises(people_data.sqlite3.DataError):
         # There is no employee #16, this *will* raise an exception.
         employee.Employee(16).get_badge_text()
 
+    # TODO: Include employee titles. How to mock multiple values?
     # NOTE: MAKE THE MOCK
     with patch(
         "people.people_data.PeopleDatabase.get_name_by_id"
@@ -185,4 +178,3 @@ def test_class_patch(mock_datasource_class):
     # NOTE: FIRE IN THE HOLE
     employee_name = employee.Employee(1).get_badge_text()
     assert employee_name == "#1 - Bob"
-

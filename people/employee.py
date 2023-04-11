@@ -17,8 +17,7 @@ class Employee(object):
         self.employee_id = _id
 
     def get_badge_text(self):
-        people_database = people_data.PeopleDatabase("db://remote_person_ds/")
-        people_database.connect()
+        people_database = people_data.PeopleDatabase()
         employee_name = people_database.get_name_by_id(self.employee_id)
         # Decorate the name with the employee number (the ID)
         logging.debug("Employee name = {}".format(employee_name))

@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 
 """
-Print decorated name badges from DB.
-Yes, it repeatedly bangs on the same DB.
-It's pretty stupid, but bear with it...
+Print decorated name badges from DB. It's pretty stupid, but good enough
+to demonstrate the mocking techniques. I have no plans to improve it...
 
 Original Author: edc@mindthump.org
 """
@@ -15,12 +14,10 @@ from people.volunteer import Volunteer
 
 
 class BadgeApp(object):
-    """
-    """
+    """ """
 
     def __init__(self, init_parameters):
-        """
-        """
+        """ """
         parser = argparse.ArgumentParser(description="Print name badges.")
         parser.add_argument(
             "-v",
@@ -29,30 +26,21 @@ class BadgeApp(object):
             action="store_true",
         )
         self.args = parser.parse_args(init_parameters)
-        self.peopledatabase = None
-
-    def init_people_database(self):
-        """
-        """
-        self.peopledatabase = PeopleDatabase("db://remote_person_ds/")
-        self.peopledatabase.connect()
+        self.peopleDatabase = PeopleDatabase()
 
     def run(self):
-        """
-        """
-        self.init_people_database()
-        # people = self.peopledatabase.get_all_people()
-        students = self.peopledatabase.get_people_by_type("STUDENT")
+        """ """
+        students = self.peopleDatabase.get_people_by_type("STUDENT")
         for student_ in students:
             print(student.Student(student_[0]).get_badge_text())
 
-        employees = self.peopledatabase.get_people_by_type("EMPLOYEE")
+        employees = self.peopleDatabase.get_people_by_type("EMPLOYEE")
         for employee_ in employees:
             print(employee.Employee(employee_[0]).get_badge_text())
 
-        volunteers = self.peopledatabase.get_people_by_type("VOLUNTEER")
+        volunteers = self.peopleDatabase.get_people_by_type("VOLUNTEER")
         for volunteer_ in volunteers:
-            print(Volunteer().get_badge_text(volunteer_[0], self.peopledatabase))
+            print(Volunteer().get_badge_text(volunteer_[0], self.peopleDatabase))
 
         return 0
 
