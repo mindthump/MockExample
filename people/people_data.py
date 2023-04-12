@@ -33,7 +33,7 @@ people_test_data = [
 ]
 
 
-class PeopleDatabase(object):
+class PeopleData(object):
     """
     """
     # Class variable; each call to `connect()` for an in-memory DB is a new instance

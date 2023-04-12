@@ -104,7 +104,8 @@ sponsored meet-up. The badges use different formats depending on various
 attributes of the people, and you need to validate the badge text.
 
 This code is not intended to be hardy or safe or efficient, or show
-good design -- it's just for the examples.
+good design -- it's just for the examples. You would never really implement
+anything this way, but it serves its purpose.
 
 I am not going to go into deep detail of the example application; I will
 only cover as much as needed to understand how the mocking is applied, so you 

@@ -8,7 +8,7 @@ Original Author: edc@mindthump.org
 """
 import sys
 import argparse
-from people.people_data import PeopleDatabase
+from people.people_data import PeopleData
 from people import student, employee, utils
 from people.volunteer import Volunteer
 
@@ -26,8 +26,8 @@ class BadgeApp(object):
             action="store_true",
         )
         self.args = parser.parse_args(init_parameters)
-        self.peopleDatabase = PeopleDatabase()
-        PeopleDatabase.initialize_db()
+        self.peopleDatabase = PeopleData()
+        PeopleData.initialize_db()
 
     def run(self):
         """ """

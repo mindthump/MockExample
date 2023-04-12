@@ -10,7 +10,7 @@ from people import people_data, volunteer, employee, utils
 
 # Initialize the database. We only need to do this because
 # we show a few examples of "real" calls for contrast.
-people_data.PeopleDatabase.initialize_db()
+people_data.PeopleData.initialize_db()
 
 # Example of overriding logger defaults.
 utils.initialize_logging(console_log_level=logging.ERROR)
@@ -18,14 +18,14 @@ logging.info("Starting Tests...")
 
 
 # ---------------- Decorate the function with a mock
-@patch("people.people_data.PeopleDatabase.get_name_by_id")
-@patch("people.people_data.PeopleDatabase.get_title_by_id")
+@patch("people.people_data.PeopleData.get_name_by_id")
+@patch("people.people_data.PeopleData.get_title_by_id")
 def test_decorator(mock_student_get_title_method, mock_student_get_name_method):
     """
     NOTE: MAKE THE MOCK
     Here the mock is created though the function decorator above. Our patching
     targets are the `get_name_by_id()` and `get_title_by_id()` methods on the
-    PeopleDatabase class in
+    PeopleData class in
     the people_data module. The patch target is usually referred to by
     "<module>.<class>.<method>".
 
@@ -80,7 +80,7 @@ def test_manual_mock():
     # for this. For volunteers, `get_badge_text()` is a class method.
     # It gets the badge text using a database reference passed as a
     # parameter.
-    people_database = people_data.PeopleDatabase()
+    people_database = people_data.PeopleData()
     title = volunteer.Volunteer.get_badge_text(4, people_database)
     assert title == "** Darla (Intern) **"
 
@@ -131,7 +131,7 @@ def test_context_manager():
     # TODO: Include employee titles. How to mock multiple values?
     # NOTE: MAKE THE MOCK
     with patch(
-        "people.people_data.PeopleDatabase.get_name_by_id"
+        "people.people_data.PeopleData.get_name_by_id"
     ) as mock_employee_getname:
         # Set a side-effect for our mock object. If the 'side_effect' is
         # an iterable, each call will return the next value. It could
@@ -163,7 +163,7 @@ def test_context_manager():
 
 # ---------------- Patch entire class
 # NOTE: MAKE THE MOCK
-@patch("people.people_data.PeopleDatabase")
+@patch("people.people_data.PeopleData")
 def test_class_patch(mock_datasource_class):
     """
     Occasionally you need to patch an entire CLASS. One reason might
