@@ -8,16 +8,13 @@ non-deterministic, restricted, or prohibitively expensive in terms
 of money, resources, time, etc. Mocking in this sense means to fake
 or substitute some piece of code, and is used to override the actual
 behavior of running code in a fast, inexpensive, and predictable manner.
-(The code that is overridden or replaced is said to be "mocked out".)
+(The code that is overridden or replaced is said to be _mocked out_.)
 
 This article is focused on unit tests that a developer creates to test
 the smallest units of functionality, but the concepts and techniques can
 be applied at higher levels of testing as well. It is not intended to be
 a deep technical study of Python mocking, but rather an introduction to
-get you interested and maybe even excited (!) to use this facility. I
-encourage you to read
-[the official documentation](https://docs.python.org/3/library/unittest.mock.html#module-unittest.mock)
-and the many, many other articles about this subject.
+get you interested and maybe even excited (!) to use this facility.
 
 Python mocks are amazing. I like to use a metaphor that a mock is
 a sci-fi robot spy, with a cloaking device (or the super-realistic
@@ -28,7 +25,14 @@ value), a change of state, or a back-and-forth 'conversation'. Mocks can
 automatically spawn other mocks as needed. They can also give other kinds
 of information such as how many times a mocked out function was called
 (or if it was called at all) or the specific values it returned to the
-caller. It can also generate "side effects" [[INSERT DEFN]].
+caller. It can also generate "side effects": a function can be executed,
+or one value from an iterator can be returned each time it is called, or an
+exception can be raised.
+
+I encourage you to read
+[the official documentation](https://docs.python.org/3/library/unittest.mock.html)
+and the many, many other articles about this subject. In fact, this is a terrific Medium article
+on this same subject: [Python Mocking, You Are A Tricksy Beast](https://medium.com/python-pandemonium/python-mocking-you-are-a-tricksy-beast-6c4a1f8d19b2).
 
 ## Important Warnings
 
@@ -59,12 +63,13 @@ seen production code with `if TEST_MODE return True`.)
 Your test in this scenario is intended only to verify the email is
 formatted correctly -- you're not testing the external system here.
 (That's a different set of tests.) Mock out the parts of *your* code
-that __use__ the external code but not the external code directly. For
+that _use_ the external code but not the external code directly. For
 example, don't create a monster mock that acts like an entire DBMS. In
 the unit test, mock out your method that fetches a user's email address
-from the database so it returns specific addresses. Then, in feature or
-acceptance tests, check that the database really returns the expected
-rows so your code returns the correct email addresses.
+from the database so it returns specific addresses. (You _did_ wrap that
+functionality into a small single-purpose method, didn't you?) Then, in
+feature or acceptance tests, check that the database really returns the
+expected rows so your code returns the correct email addresses.
 
 # How Do I Use Mocking?
 
@@ -72,16 +77,18 @@ There are three simple phases to a mock:
 
 1. MAKE THE MOCK
 
-A mock is usually created by instantiating the MagicMock() class
+A mock is usually created by instantiating the `MagicMock()` class
 directly, or by patching the code. Patching is overriding existing code
-at execution time using a decorator or context manager. A MagicMock can
+at execution time using a decorator or context manager. A mock can
 "stand in" for nearly any kind of object: classes, objects, methods, and more.
 
-Patch as small as you can; whenever possible only the specific behavior
+Craft the patch as small as you can; whenever possible only the specific behavior
 that is actually _used_, such as a single method's return value.
 However, there are times a resource class is expensive or impossible to
 instantiate, and you may need to patch the whole class (see [[EXAMPLE]]
-below).
+below). See the documentation
+("[Where to Patch](https://docs.python.org/3/library/unittest.mock.html#where-to-patch)")
+for details.
 
 1. ARM THE MOCK
 
@@ -99,18 +106,20 @@ that?
 ## The Example Code
 
 The [example code](https://github.com/mindthump/MockExample)
-is a silly application that prints name badges for a
-sponsored meet-up. The badges use different formats depending on various
-attributes of the people, and you need to validate the badge text.
+is a silly application that prints name badges for a sponsored meet-up.
+The badges use different formats depending on various attributes of the
+people, and you need to validate the badge text.
 
 This code is not intended to be hardy or safe or efficient, or show
-good design -- it's just for the examples. You would never really implement
-anything this way, but it serves its purpose.
+good design, and there is no error checking at all -- it's just for the
+examples. You would never really implement anything this way, but it
+serves its purpose.
 
 I am not going to go into deep detail of the example application; I will
-only cover as much as needed to understand how the mocking is applied, so you 
-can start using it yourself. If you are interested, please look at the GitHub repository.
-If you are motivated give it a star, or even send me a pull request.
+only cover as much as needed to understand how the mocking is applied,
+so you can start using it yourself. If you are interested, please look
+at the GitHub repository. If you are motivated give it a star, or even
+send me a pull request.
 
 These are simple, straightforward examples of mocking in Python unit
 tests. What I'm after is pragmatic heuristics to get you started, not an

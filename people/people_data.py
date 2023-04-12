@@ -1,6 +1,7 @@
 """
-This class is a wrapper around an in-memory sqlite3 database. The
-database represents a resource that lives "out there somewhere".
+
+This class is a wrapper around an in-memory sqlite3 database. It
+represents a resource that lives "out there somewhere".
 
 This class will be the _target_ of our mocking. There are basic
 functions/methods that return a value, and more general queries
@@ -9,8 +10,6 @@ returning iterables of data structures (rows, JSON, etc.)
 IMPORTANT: For simplicity in our example, clients access specific
 columns in results by number. If needed we could get the column names
 from the query's `description` attribute.
-
-And there is no error checking at all -- this is just an example!
 
 Original Author: edc@mindthump.org
 """
@@ -36,11 +35,11 @@ people_test_data = [
 class PeopleData(object):
     """
     """
-    # Class variable; each call to `connect()` for an in-memory DB is a new instance
+    # Class variable; each call to `connect()` for sqlite3 in-memory is a new instance
     connection = sqlite3.connect(":memory:")
 
     @classmethod
-    def initialize_db(cls):
+    def initialize_data(cls):
         """
         Fill the database with data from the list of tuples above.
         """
@@ -72,6 +71,21 @@ class PeopleData(object):
             )
         logging.debug("Completed query, returning results.")
         return result
+
+    def get_person_by_id(self, query_id):
+        """
+        This is the primary method we will patch. There is nothing
+        special here to accommodate tests, it's just ordinary code; that
+        is the true beauty of the mocking techniques.
+        """
+        # CAUTION! NEVER, EVER DO THIS IN REAL CODE -- it opens you
+        # to SQL injection attacks. Use parameterized queries; see
+        # `initialize_data()` above. I'm being a little lazy for the
+        # sake of simplifying the example, and I know where The`.
+        result = self._query(f"SELECT * FROM people WHERE id = {query_id}")
+        # There should be :) only one value in one record.
+        logging.debug("Completed get_name_by_id.")
+        return result[0][0]
 
     def get_name_by_id(self, query_id):
         """

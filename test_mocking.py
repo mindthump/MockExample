@@ -8,9 +8,9 @@ import logging
 from people.student import Student  # importing a specific class
 from people import people_data, volunteer, employee, utils
 
-# Initialize the database. We only need to do this because
+# Initialize the data source. We only need to do this because
 # we show a few examples of "real" calls for contrast.
-people_data.PeopleData.initialize_db()
+people_data.PeopleData.initialize_data()
 
 # Example of overriding logger defaults.
 utils.initialize_logging(console_log_level=logging.ERROR)
@@ -64,7 +64,7 @@ def test_decorator(mock_student_get_title_method, mock_student_get_name_method):
     student_two_badge_text = student_two.get_badge_text()
     logging.info(f"Student #2 name = '{student_two_badge_text}'")
 
-    # But the real Student #2 is Brenda -- we avoided the database fetch.
+    # But the real Student #2 is Brenda -- we avoided the data source fetch.
     assert student_two_badge_text == "HI! My name is Sam (Sophomore at UCLA)"
 
 
@@ -73,15 +73,15 @@ def test_manual_mock():
     """
     It's a thing with a door and the world and a thing. (Never mind.)
     """
-    # First, for contrast, is the 'real' value test using the DB. We
+    # First, for contrast, is the 'real' value test using the data. We
     # could not do this in the `test_decorator()` example above, because
     # the `get_badge_text()` method had already been mocked out by the
-    # decorator for the entire function. We need the real database
+    # decorator for the entire function. We need the real data source
     # for this. For volunteers, `get_badge_text()` is a class method.
-    # It gets the badge text using a database reference passed as a
+    # It gets the badge text using a data source reference passed as a
     # parameter.
-    people_database = people_data.PeopleData()
-    title = volunteer.Volunteer.get_badge_text(4, people_database)
+    volunteer_data = people_data.PeopleData()
+    title = volunteer.Volunteer.get_badge_text(4, volunteer_data)
     assert title == "** Darla (Intern) **"
 
     # NOTE: MAKE THE MOCK

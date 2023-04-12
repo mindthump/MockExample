@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Print decorated name badges from DB. It's pretty stupid, but good enough
+Print decorated name badges from a data source. It's pretty stupid, but good enough
 to demonstrate the mocking techniques. I have no plans to improve it...
 
 Original Author: edc@mindthump.org
@@ -27,7 +27,7 @@ class BadgeApp(object):
         )
         self.args = parser.parse_args(init_parameters)
         self.peopleDatabase = PeopleData()
-        PeopleData.initialize_db()
+        PeopleData.initialize_data()
 
     def run(self):
         """ """
