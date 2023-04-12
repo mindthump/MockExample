@@ -52,7 +52,7 @@ class PeopleData(object):
         )
         logging.debug("Database initialized.")
 
-    def _query(self, query_string):
+    def _query(self, query_string, parameters=None):
         """
         A generic method to get all the returned rows to a list, catch some errors,
         do some logging, and sit around doing nothing for a short time to represent an
@@ -60,7 +60,10 @@ class PeopleData(object):
         """
         # Wait a while here to show "cost" ;)
         time.sleep(2)
-        raw_query_cursor = self.connection.execute(query_string)
+        if parameters:
+            raw_query_cursor = self.connection.execute(query_string, parameters)
+        else:
+            raw_query_cursor = self.connection.execute(query_string)
         result = raw_query_cursor.fetchall()
         # We're raising this error on purpose, to investigate `pytest.raises()`
         if not result:
@@ -78,14 +81,10 @@ class PeopleData(object):
         special here to accommodate tests, it's just ordinary code; that
         is the true beauty of the mocking techniques.
         """
-        # CAUTION! NEVER, EVER DO THIS IN REAL CODE -- it opens you
-        # to SQL injection attacks. Use parameterized queries; see
-        # `initialize_data()` above. I'm being a little lazy for the
-        # sake of simplifying the example, and I know where The`.
-        result = self._query(f"SELECT * FROM people WHERE id = {query_id}")
-        # There should be :) only one value in one record.
-        logging.debug("Completed get_name_by_id.")
-        return result[0][0]
+        result = self._query("SELECT * FROM people WHERE id = ?", [query_id])
+        logging.debug("Completed get_person_by_id.")
+        # There should be :) only one record.
+        return result[0]
 
     def get_name_by_id(self, query_id):
         """
@@ -93,13 +92,13 @@ class PeopleData(object):
         special here to accommodate tests, it's just ordinary code; that
         is the true beauty of the mocking techniques.
         """
-        result = self._query("SELECT name FROM people WHERE id = {}".format(query_id))
+        result = self._query("SELECT name FROM people WHERE id = ?", [query_id])
         # There should be :) only one value in one record.
         logging.debug("Completed get_name_by_id.")
         return result[0][0]
 
     def get_title_by_id(self, query_id):
-        result = self._query("SELECT title FROM people WHERE id = {}".format(query_id))
+        result = self._query("SELECT title FROM people WHERE id = ?", [query_id])
         logging.debug("Completed get_title_by_id.")
         return result[0][0]
 
@@ -109,8 +108,6 @@ class PeopleData(object):
         return result
 
     def get_people_by_type(self, query_type):
-        result = self._query(
-            "SELECT * FROM people WHERE type = '{}'".format(query_type)
-        )
+        result = self._query("SELECT * FROM people WHERE type = ?", [query_type])
         logging.debug("Completed get_people_by_type.")
         return result

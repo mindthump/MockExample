@@ -17,8 +17,9 @@ class Employee(object):
         self.employee_id = _id
 
     def get_badge_text(self):
-        employee_data = people_data.PeopleData()
-        employee_name = employee_data.get_name_by_id(self.employee_id)
+        employee_data = people_data.PeopleData().get_person_by_id(self.employee_id)
+        employee_name = employee_data[1]
+        employee_title = employee_data[2]
         # Decorate the name with the employee number (the ID)
-        logging.debug("Employee name = {}".format(employee_name))
-        return "#{} - {}".format(self.employee_id, employee_name)
+        logging.debug(f"Employee name = {employee_name}")
+        return f"#{self.employee_id} - {employee_name} ({employee_title})"

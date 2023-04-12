@@ -23,7 +23,7 @@ logging.info("Starting Tests...")
 def test_decorator(mock_student_get_title_method, mock_student_get_name_method):
     """
     NOTE: MAKE THE MOCK
-    Here the mock is created though the function decorator above. Our patching
+    Here the mock is created though the function decorators above. Our patching
     targets are the `get_name_by_id()` and `get_title_by_id()` methods on the
     PeopleData class in
     the people_data module. The patch target is usually referred to by
@@ -119,7 +119,7 @@ def test_context_manager():
     # Not patched
     unpatched_employee = employee.Employee(1)
     unpatched_employee_badge = unpatched_employee.get_badge_text()
-    assert unpatched_employee_badge == "#1 - Alice"
+    assert unpatched_employee_badge == "#1 - Alice (Developer)"
 
     # JUST FOR FUN
     # Test that a call raises an expected exception; from py.test, not mocking!
@@ -131,34 +131,36 @@ def test_context_manager():
     # TODO: Include employee titles. How to mock multiple values?
     # NOTE: MAKE THE MOCK
     with patch(
-        "people.people_data.PeopleData.get_name_by_id"
-    ) as mock_employee_getname:
-        # Set a side-effect for our mock object. If the 'side_effect' is
+        "people.people_data.PeopleData.get_person_by_id"
+    ) as mock_employee_get_data:
+        # Set the side effect for our mock object. If `side_effect` is
         # an iterable, each call will return the next value. It could
-        # call a function, taking the original arguments. Neither of
-        # these people are in the database.
-        # TODO: Use itertools to make this inexhaustible?
+        # also call a function, taking the original arguments, or raise
+        # an exception. Neither of these people are in the database.
         # NOTE: ARM THE MOCK
-        mock_employee_getname.side_effect = ["Bob", "Tom"]
+        mock_employee_get_data.side_effect = [
+            (16, "Bob", "Hacker", "EX-EMPLOYEE"),
+            (105, "Tom", "Janitor", "APPLICANT"),
+        ]
 
         # TEST: Employee badges should have Employee # and Name
         first_employee = employee.Employee(16)
         # NOTE: FIRE IN THE HOLE
         first_employee_badge_text = first_employee.get_badge_text()
         # Suddenly, there IS an employee #16 !!
-        assert first_employee_badge_text == "#16 - Bob"
+        assert first_employee_badge_text == "#16 - Bob (Hacker)"
 
         # Notice that it doesn't matter that we re-instantiate the
         # object, because we've patched the method - not the class.
         second_employee = employee.Employee(105)
         # This is the second time we are running the patched method
         second_employee_badge_text = second_employee.get_badge_text()
-        assert second_employee_badge_text == "#105 - Tom"
+        assert second_employee_badge_text == "#105 - Tom (Janitor)"
 
         # We can look at if it was called, how many times, argument
         # values on the calls, values set on the mock by the method, and
         # much more
-        assert mock_employee_getname.call_count == 2
+        assert mock_employee_get_data.call_count == 2
 
 
 # ---------------- Patch entire class
@@ -177,8 +179,8 @@ def test_class_patch(mock_datasource_class):
     """
     # NOTE: ARM THE MOCK
     mock_datasource_instance = mock_datasource_class.return_value
-    mock_getnamebyid_method = mock_datasource_instance.get_name_by_id
-    mock_getnamebyid_method.return_value = "Bob"
+    mock_get_person_by_id_method = mock_datasource_instance.get_person_by_id
+    mock_get_person_by_id_method.return_value = (16, "Bob", "Hacker", "EX-EMPLOYEE")
     # NOTE: FIRE IN THE HOLE
-    employee_name = employee.Employee(1).get_badge_text()
-    assert employee_name == "#1 - Bob"
+    employee_name = employee.Employee(222).get_badge_text()
+    assert employee_name == "#222 - Bob (Hacker)"

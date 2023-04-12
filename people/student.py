@@ -21,6 +21,7 @@ class Student(object):
         people_data = PeopleData()
 
         # Get the name from each instance of the data source
+        student_name = people_data.get_person_by_id(self.student_id)
         student_name = people_data.get_name_by_id(self.student_id)
         student_title = people_data.get_title_by_id(self.student_id)
         logging.debug(f"{student_name}")
