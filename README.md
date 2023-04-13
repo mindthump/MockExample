@@ -10,12 +10,6 @@ or substitute some piece of code, and is used to override the actual
 behavior of running code in a fast, inexpensive, and predictable manner.
 (The code that is overridden or replaced is said to be _mocked out_.)
 
-This article is focused on unit tests that a developer creates to test
-the smallest units of functionality, but the concepts and techniques can
-be applied at higher levels of testing as well. It is not intended to be
-a deep technical study of Python mocking, but rather an introduction to
-get you interested and maybe even excited (!) to use this facility.
-
 Python mocks are amazing. I like to use a metaphor that a mock is
 a sci-fi robot spy, with a cloaking device (or the super-realistic
 masks in 'Mission: Impossible'). It's a versatile chameleon that will
@@ -29,10 +23,27 @@ caller. It can also generate "side effects": a function can be executed,
 or one value from an iterator can be returned each time it is called, or an
 exception can be raised.
 
+This article is focused on unit tests that a developer creates to test
+the smallest units of functionality, but the concepts and techniques can
+be applied at higher levels of testing as well. It is not intended to be
+a deep technical study of Python mocking, but rather an introduction to
+get you interested and maybe even excited (!) to use this facility.
+
+The [example code](https://github.com/mindthump/MockExample) that
+accompanies this article is a working application, but only so far as to
+illustrate the features and functionality of the subject. I put together
+the application as an aid to my own investigation of mocking in python,
+to watch the mocking occur live in a debugger (I prefer PyCharm); I
+suggest you do the same. It is not intended to be hardy or safe or
+efficient, or show good design, and there is no error checking at all --
+it's just an example. You wouldn't necessarily want implement anything
+this way, but it serves its purpose.
+
 I encourage you to read
 [the official documentation](https://docs.python.org/3/library/unittest.mock.html)
-and the many, many other articles about this subject. In fact, this is a terrific Medium article
-on this same subject: [Python Mocking, You Are A Tricksy Beast](https://medium.com/python-pandemonium/python-mocking-you-are-a-tricksy-beast-6c4a1f8d19b2).
+and the many, many other articles about this subject. In fact, this is a
+terrific Medium article on this same subject:
+[Python Mocking, You Are A Tricksy Beast](https://medium.com/python-pandemonium/python-mocking-you-are-a-tricksy-beast-6c4a1f8d19b2).
 
 ## Important Warnings
 
@@ -110,22 +121,16 @@ is a silly application that prints name badges for a sponsored meet-up.
 The badges use different formats depending on various attributes of the
 people, and you need to validate the badge text.
 
-This code is not intended to be hardy or safe or efficient, or show
-good design, and there is no error checking at all -- it's just for the
-examples. You would never really implement anything this way, but it
-serves its purpose.
-
 I am not going to go into deep detail of the example application; I will
 only cover as much as needed to understand how the mocking is applied,
 so you can start using it yourself. If you are interested, please look
-at the GitHub repository. If you are motivated give it a star, or even
+at the GitHub repository. If you are so motivated give it a star, or even
 send me a pull request.
 
 These are simple, straightforward examples of mocking in Python unit
 tests. What I'm after is pragmatic heuristics to get you started, not an
-in-depth discussion about namespaces and bindings. (I originally created
-the sample code shown here to watch the mocking occur live in PyCharm's
-debugger.) I use `pytest`, but it could be adapted for any unit test
+in-depth discussion about namespaces and bindings.
+I use `pytest`, but it could be adapted for any unit test
 framework.
 
 We will start with a fake data source, `people_data.py`. This is a very

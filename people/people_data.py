@@ -33,8 +33,8 @@ people_test_data = [
 
 
 class PeopleData(object):
-    """
-    """
+    """ """
+
     # Class variable; each call to `connect()` for sqlite3 in-memory is a new instance
     connection = sqlite3.connect(":memory:")
 
@@ -75,6 +75,7 @@ class PeopleData(object):
         logging.debug("Completed query, returning results.")
         return result
 
+    # TODO: Call this on object initialization?
     def get_person_by_id(self, query_id):
         """
         This is the primary method we will patch. There is nothing
@@ -82,32 +83,32 @@ class PeopleData(object):
         is the true beauty of the mocking techniques.
         """
         result = self._query("SELECT * FROM people WHERE id = ?", [query_id])
-        logging.debug("Completed get_person_by_id.")
+        logging.debug(f"Completed get_person_by_id: {result}.")
         # There should be :) only one record.
         return result[0]
 
+    # TODO: A property of the type?
     def get_name_by_id(self, query_id):
         """
-        This is the primary method we will patch. There is nothing
-        special here to accommodate tests, it's just ordinary code; that
-        is the true beauty of the mocking techniques.
+        A utility method to extract one field.
         """
-        result = self._query("SELECT name FROM people WHERE id = ?", [query_id])
-        # There should be :) only one value in one record.
-        logging.debug("Completed get_name_by_id.")
-        return result[0][0]
+        result = self.get_person_by_id(query_id)[1]
+        logging.debug(f"Completed get_name_by_id: {query_id} => {result}.")
+        return result
 
     def get_title_by_id(self, query_id):
-        result = self._query("SELECT title FROM people WHERE id = ?", [query_id])
-        logging.debug("Completed get_title_by_id.")
-        return result[0][0]
+        result = self.get_person_by_id(query_id)[2]
+        logging.debug(f"Completed get_title_by_id: {query_id} => {result}.")
+        return result
 
     def get_all_people(self):
         result = self._query("SELECT * FROM people")
-        logging.debug("Completed get_all_people.")
+        logging.debug(f"Completed get_all_people, returned {len(result)} rows.")
         return result
 
     def get_people_by_type(self, query_type):
         result = self._query("SELECT * FROM people WHERE type = ?", [query_type])
-        logging.debug("Completed get_people_by_type.")
+        logging.debug(
+            f"Completed get_people_by_type for '{query_type}', returned {len(result)} rows."
+        )
         return result
